@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.tessa.kyc.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Logged In as "/>
+
+        <TextView
+            android:id="@+id/Login_Status_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="test"/>
+
+        <TextView
+            android:id="@+id/Login_ID_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="test"/>
+
+        <TextView
+            android:id="@+id/Login_Email_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="test"/>
+
+        <Button
+            android:id="@+id/verify_email_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_email"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="First Name"/>
+
+        <EditText
+            android:id="@+id/Login_FirstName_EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Last Name"/>
+
+        <EditText
+            android:id="@+id/Login_LastName_EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Address"/>
+
+        <EditText
+            android:id="@+id/Login_Address_EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="4"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Postal Code"/>
+
+        <EditText
+            android:id="@+id/Login_PostalCode_EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="4"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choice of Identification Documents: "/>
+
+        <Spinner
+            android:id="@+id/Login_Identification_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/Login_TakePhoto_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Take Photo"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+        <ImageView
+            android:id="@+id/Login_ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+
+        <Button
+            android:id="@+id/Login_UploadImage_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Image"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_out"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+    </LinearLayout>
+
+
+</ScrollView>
