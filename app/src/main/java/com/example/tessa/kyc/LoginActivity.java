@@ -57,6 +57,10 @@ public class LoginActivity extends BaseActivity implements
     private Button verifyEmailButton;
     private StorageReference storageRef;
     private Bitmap imageBitmap;
+        
+        
+    private String userID;
+    private Uri downloadUri;
 
     final String TAG = "DED";
 
@@ -183,7 +187,7 @@ public class LoginActivity extends BaseActivity implements
 
     private void uploadImagetoFirebase(){
 
-        String userID = mAuth.getCurrentUser().getUid();
+        userID = mAuth.getCurrentUser().getUid();
 
         // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
         Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
@@ -199,7 +203,8 @@ public class LoginActivity extends BaseActivity implements
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get a URL to the uploaded content
-//                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        downloadUri = taskSnapshot.getDownloadUrl();
+                        mDatabase.child(userID).push().setValue(downloadUri.toString());
                         Toast.makeText(getApplicationContext(), "Image Upload Success", Toast.LENGTH_SHORT);
                     }
                 })
