@@ -44,12 +44,15 @@ public class LoginActivity extends BaseActivity implements
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private DatabaseReference usersRef;
+    private String userID;
 
+    private TextView emailView;
     private TextView statusView;
     private TextView idView;
-    private TextView nameView;
-    private TextView postalCodeView;
-    private TextView identifNoView;
+    private EditText nameView;
+    private EditText postalCodeView;
+    private EditText identifNoView;
     private ImageView mImageView;
     private TextView pleaseUpload;
     private Spinner mSpinner;
@@ -66,10 +69,11 @@ public class LoginActivity extends BaseActivity implements
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://authentication-24160.firebaseio.com/");
-        DatabaseReference usersRef = mDatabase.child("users");
-        //Map<String, User> users = new HashMap<>();
+        userID = mAuth.getCurrentUser().getUid();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        usersRef = mDatabase.child("users").child(userID);
 
+        emailView = (TextView) findViewById(R.id.Login_Email_TextView);
         statusView = (TextView) findViewById(R.id.Login_Status_TextView);
         idView = (TextView) findViewById(R.id.Login_ID_TextView);
         nameView = (EditText) findViewById(R.id.Login_FirstName_EditText);
@@ -82,21 +86,27 @@ public class LoginActivity extends BaseActivity implements
         verifyEmailButton = (Button) findViewById(R.id.verify_email_button);
 
         Intent intent = getIntent();
+        emailView.setText(intent.getStringExtra("E-mail"));
         idView.setText(intent.getStringExtra("ID"));
-        statusView.setText(intent.getStringExtra("E-mail"));
+        if (mAuth.getCurrentUser().isEmailVerified()) statusView.setText("[VERIFIED]");
+        else statusView.setText("[UNVERIFIED]");
 
-// Create an ArrayAdapter using the string array and a default spinner layout
+        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.identification_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
+
+        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
+
+        // Apply the adapter to the spinner
         mSpinner.setAdapter(adapter);
 
         // Create a storage reference from our app
         storageRef = FirebaseStorage.getInstance().getReference();
 
-        if (mAuth.getCurrentUser()!=null&&mAuth.getCurrentUser().isEmailVerified()) verifyEmailButton.setEnabled(false);
+        if (mAuth.getCurrentUser()!=null &&
+                mAuth.getCurrentUser().isEmailVerified())
+            verifyEmailButton.setEnabled(false);
     }
 
     private void sendEmailVerification() {
@@ -143,22 +153,27 @@ public class LoginActivity extends BaseActivity implements
             startActivity(intent);
         }
         if (i == R.id.Login_TakePhoto_button) {
-            /*Intent intent = new Intent(this, CameraActivity.class);
-            startActivity(intent);*/
             dispatchTakePictureIntent();
             takePhotoButton.setText("Retake Photo");
         }
         if (i == R.id.Login_UploadImage_button) {
-            uploadImagetoFirebase();
+            if (validateImageUpload()) uploadImagetoFirebase();
+            else validateImageUpload();
         }
         if (i == R.id.Login_Submit_button) {
-            if (validateForm()) {
-                //writeNewUser(nameView.toString(), postalCodeView.toString(), identifNoView.toString();
-                //usersRef.setValueAsync(users);
+            if (validateForm() && validateImageUpload()) {
+                String fn = nameView.getText().toString();
+                String pc = postalCodeView.getText().toString();
+                String id = identifNoView.getText().toString();
+                writeNewUser(fn, pc, id);
+                Toast.makeText(LoginActivity.this, "Submission Successful, Please wait for your physical token to be delivered", Toast.LENGTH_SHORT).show();
                 mAuth.signOut();
                 Intent intent = new Intent(this, SignUpActivity.class);
                 startActivity(intent);
-            } else validateForm();
+            } else {
+                validateForm();
+                validateImageUpload();
+            }
         }
     }
 
@@ -183,8 +198,6 @@ public class LoginActivity extends BaseActivity implements
 
     private void uploadImagetoFirebase(){
 
-        String userID = mAuth.getCurrentUser().getUid();
-
         // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
         Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
 
@@ -198,9 +211,9 @@ public class LoginActivity extends BaseActivity implements
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-//                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        Toast.makeText(getApplicationContext(), "Image Upload Success", Toast.LENGTH_SHORT);
+                        //Get a URL to the uploaded content
+//                      Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Toast.makeText(getApplicationContext(), "Image Upload Successful", Toast.LENGTH_SHORT);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -227,13 +240,20 @@ public class LoginActivity extends BaseActivity implements
         return cursor.getString(idx);
     }
 
-    private boolean validateForm() {
+    private boolean validateImageUpload() {
         boolean valid = true;
 
         if (mImageView.getVisibility()==View.GONE) {
             pleaseUpload.setText("Please upload an image of you holding your identification documents for verification");
             pleaseUpload.setVisibility(View.VISIBLE);
+            valid = false;
         } else pleaseUpload.setVisibility(View.GONE);
+
+        return valid;
+    }
+
+    private boolean validateForm() {
+        boolean valid = true;
 
         TextView mfirstName = (TextView) findViewById(R.id.Login_FirstName_EditText);
         String firstName = mfirstName.getText().toString();
@@ -247,14 +267,10 @@ public class LoginActivity extends BaseActivity implements
         return valid;
     }
 
-       /* users.put("alanisawesome", new User("June 23, 1912", "Alan Turing"));
-        users.put("gracehop", new User("December 9, 1906", "Grace Hopper"));
-
-        usersRef.setValueAsync(users);*/
-
     private void writeNewUser(String fullName, String postalCode, String identifNo) {
-        User user = new User(fullName, postalCode, identifNo);
-        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).setValue(user);
-
+        FirebaseUser user =  mAuth.getCurrentUser();
+        String userId = user.getUid();
+        User nUser = new User(fullName, postalCode, identifNo);
+        usersRef.setValue(nUser);
     }
 }
