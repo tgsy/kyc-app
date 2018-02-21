@@ -2,6 +2,8 @@
     <string name="app_name">KYC</string>
     <string name="title_activity_login">Sign in</string>
 
+    <string name="get_started">Get Started</string>
+
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
@@ -29,7 +31,7 @@
     <string name="create_account">Create Account</string>
     <string name="sign_out">Sign Out</string>
     <string name="verify_email">Verify Email</string>
-    <string name="emailpassword_title_text">Email and Password</string>
+    <string name="emailpassword_title_text">Log In or Register</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="title_activity_sign_up">SignUpActivity</string>

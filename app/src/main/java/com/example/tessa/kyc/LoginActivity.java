@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,6 +26,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -32,16 +36,25 @@ import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+
     private TextView statusView;
     private TextView idView;
+    private TextView nameView;
+    private TextView postalCodeView;
+    private TextView identifNoView;
     private ImageView mImageView;
+    private TextView pleaseUpload;
     private Spinner mSpinner;
     private Button takePhotoButton;
+    private Button verifyEmailButton;
     private StorageReference storageRef;
     private Bitmap imageBitmap;
 
@@ -53,12 +66,20 @@ public class LoginActivity extends BaseActivity implements
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReferenceFromUrl("https://authentication-24160.firebaseio.com/");
+        DatabaseReference usersRef = mDatabase.child("users");
+        //Map<String, User> users = new HashMap<>();
 
         statusView = (TextView) findViewById(R.id.Login_Status_TextView);
         idView = (TextView) findViewById(R.id.Login_ID_TextView);
+        nameView = (EditText) findViewById(R.id.Login_FirstName_EditText);
+        postalCodeView = (EditText) findViewById(R.id.Login_PostalCode_EditText);
+        identifNoView = (EditText) findViewById(R.id.Login_IdentifNo_EditText);
         mImageView = (ImageView) findViewById(R.id.Login_ImageView);
+        pleaseUpload = (TextView) findViewById(R.id.Login_pleaseUpload_TextView);
         mSpinner = (Spinner) findViewById(R.id.Login_Identification_spinner);
         takePhotoButton = (Button) findViewById(R.id.Login_TakePhoto_button);
+        verifyEmailButton = (Button) findViewById(R.id.verify_email_button);
 
         Intent intent = getIntent();
         idView.setText(intent.getStringExtra("ID"));
@@ -75,6 +96,7 @@ public class LoginActivity extends BaseActivity implements
         // Create a storage reference from our app
         storageRef = FirebaseStorage.getInstance().getReference();
 
+        if (mAuth.getCurrentUser()!=null&&mAuth.getCurrentUser().isEmailVerified()) verifyEmailButton.setEnabled(false);
     }
 
     private void sendEmailVerification() {
@@ -128,6 +150,15 @@ public class LoginActivity extends BaseActivity implements
         }
         if (i == R.id.Login_UploadImage_button) {
             uploadImagetoFirebase();
+        }
+        if (i == R.id.Login_Submit_button) {
+            if (validateForm()) {
+                //writeNewUser(nameView.toString(), postalCodeView.toString(), identifNoView.toString();
+                //usersRef.setValueAsync(users);
+                mAuth.signOut();
+                Intent intent = new Intent(this, SignUpActivity.class);
+                startActivity(intent);
+            } else validateForm();
         }
     }
 
@@ -196,4 +227,34 @@ public class LoginActivity extends BaseActivity implements
         return cursor.getString(idx);
     }
 
+    private boolean validateForm() {
+        boolean valid = true;
+
+        if (mImageView.getVisibility()==View.GONE) {
+            pleaseUpload.setText("Please upload an image of you holding your identification documents for verification");
+            pleaseUpload.setVisibility(View.VISIBLE);
+        } else pleaseUpload.setVisibility(View.GONE);
+
+        TextView mfirstName = (TextView) findViewById(R.id.Login_FirstName_EditText);
+        String firstName = mfirstName.getText().toString();
+        if (TextUtils.isEmpty(firstName)) {
+            mfirstName.setError("Required.");
+            valid = false;
+        } else {
+            mfirstName.setError(null);
+        }
+
+        return valid;
+    }
+
+       /* users.put("alanisawesome", new User("June 23, 1912", "Alan Turing"));
+        users.put("gracehop", new User("December 9, 1906", "Grace Hopper"));
+
+        usersRef.setValueAsync(users);*/
+
+    private void writeNewUser(String fullName, String postalCode, String identifNo) {
+        User user = new User(fullName, postalCode, identifNo);
+        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).setValue(user);
+
+    }
 }
