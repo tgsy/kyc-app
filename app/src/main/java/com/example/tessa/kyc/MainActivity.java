@@ -22,9 +22,14 @@ public class MainActivity extends BaseActivity {
     }
 
     public void onGetStarted(View view){
-        Intent intent = new Intent(this, SignUpActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
+
+//    public void onLogin(View view){
+//        Intent intent = new Intent(this, SignUpActivity.class);
+//        startActivity(intent);
+//    }
 
 //    @Override
 //    public void onStart() {

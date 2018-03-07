@@ -7,25 +7,39 @@
     android:layout_height="match_parent"
     tools:context="com.example.tessa.kyc.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true" >
+
 
     <ImageView
         android:id="@+id/Main_kyc"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:src="@drawable/kyc_full"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
+        android:src="@drawable/kyc"
+        android:layout_gravity="center" />
 
     <Button
-        android:id="@+id/Main_GetStartedButton"
+        android:id="@+id/Main_LoginButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:onClick="onGetStarted"
-        android:text="@string/get_started"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/Main_kyc"
+        android:text="Get Started"
+        android:layout_gravity="center"
         android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+    <!--<Button
+        android:id="@+id/Main_SignUpButton"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:onClick="onSignup"
+        android:text="@string/sign_up"
+        android:layout_gravity="center"
+        android:theme="@style/ThemeOverlay.MyDarkButton" />-->
+    </LinearLayout>
 
 </RelativeLayout>
