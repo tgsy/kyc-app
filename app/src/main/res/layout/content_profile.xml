@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.tessa.kyc.ProfileActivity"
+    tools:showIn="@layout/activity_profile">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50sp"
+        android:layout_marginRight="50sp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/Profile_Email_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="test"/>
+
+        <TextView
+            android:id="@+id/Profile_Status_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="test"/>
+
+        <TextView
+            android:id="@+id/Profile_ID_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="test"/>
+
+        <Button
+            android:id="@+id/verify_email_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/verify_email"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="First Name"/>
+
+        <EditText
+            android:id="@+id/Profile_FirstName_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:selectAllOnFocus="false"
+            android:shadowColor="@color/colorAccent"
+            android:singleLine="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="Last Name"/>
+
+        <EditText
+            android:id="@+id/Profile_LastName_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="Address"/>
+
+        <EditText
+            android:id="@+id/Profile_Address_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="Postal Code"/>
+
+        <EditText
+            android:id="@+id/Profile_PostalCode_EditText"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choice of Identification Documents: "/>
+
+        <Spinner
+            android:id="@+id/Profile_Identification_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Identification Number"/>
+
+        <EditText
+            android:id="@+id/Profile_IdentifNo_EditText"
+            android:layout_width="200dp"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image of verification document"/>
+
+        <ImageButton
+            android:id="@+id/Profile_TakePhoto_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="onClick"
+            android:scaleType="centerInside"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_add_a_photo_black_24dp" />
+
+        <ImageView
+            android:id="@+id/Profile_ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/Profile_UploadImage_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="onClick"
+            android:scaleType="centerInside"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_file_upload_black_24dp"
+            android:text="Upload Image" />
+
+        <TextView
+            android:id="@+id/Profile_pleaseUpload_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="8sp"
+            android:textColor="#B22222"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/Profile_Submit_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update"
+            android:layout_gravity="center"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_out"
+            android:onClick="onClick"
+            android:theme="@style/ThemeOverlay.MyDarkButton" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

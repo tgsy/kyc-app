@@ -1,8 +1,6 @@
 <resources>
-    <string name="app_name">KYC</string>
+    <string name="app_name">blocktrace</string>
     <string name="title_activity_login">Sign in</string>
-
-    <string name="get_started">Get Started</string>
 
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
@@ -27,7 +25,9 @@
     <string name="signed_in">Signed In</string>
     <string name="signed_out">Signed Out</string>
 
-    <string name="sign_in">Sign In</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+
     <string name="create_account">Create Account</string>
     <string name="sign_out">Sign Out</string>
     <string name="verify_email">Verify Email</string>
@@ -40,5 +40,13 @@
     <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
     <string name="auth_failed">authentication failed</string>
     <string name="title_activity_image_upload">ImageUploadActivity</string>
+    <string name="title_activity_main_logged_in">LoggedInActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+
 
 </resources>
