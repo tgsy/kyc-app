@@ -44,7 +44,7 @@ public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
     private FirebaseAuth mAuth;
-
+  
     final String TAG = "DED";
     private EditText mEmailField;
     private EditText mPasswordField;
