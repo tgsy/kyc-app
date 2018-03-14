@@ -10,4 +10,8 @@ public class CompanyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
     }
+
+    private void onClick() {
+
+    }
 }

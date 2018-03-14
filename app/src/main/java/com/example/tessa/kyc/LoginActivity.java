@@ -124,8 +124,7 @@ public class LoginActivity extends BaseActivity implements
             intent.putExtra("ID", user.getUid());
             startActivity(intent);
         } else {
-            findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
-            findViewById(R.id.SignUp_email_password_fields).setVisibility(View.VISIBLE);
+            findViewById(R.id.Profile_Invalid).setVisibility(View.VISIBLE);
         }
     }
 
@@ -150,7 +149,6 @@ public class LoginActivity extends BaseActivity implements
 
         return valid;
     }
-
 
     @Override
     public void onClick(View v) {

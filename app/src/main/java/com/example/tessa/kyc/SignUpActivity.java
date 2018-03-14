@@ -66,6 +66,7 @@ public class SignUpActivity extends BaseActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.i(TAG, "user" + mAuth.getCurrentUser());
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -83,6 +84,45 @@ public class SignUpActivity extends BaseActivity implements
         // [END create_user_with_email]
     }
 
+    private void signIn(String email, String password) {
+        Log.d(TAG, "signIn:" + email);
+        if (!validateForm()) {
+            return;
+        }
+
+        showProgressDialog();
+
+        // [START sign_in_with_email]
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+
+                        // [START_EXCLUDE]
+                        if (!task.isSuccessful()) {
+//                            mStatusTextView.setText(R.string.auth_failed);
+//                            mStatusTextView.setVisibility(View.VISIBLE);
+                        }
+                        hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
+        // [END sign_in_with_email]
+    }
+
     private void signOut() {
         mAuth.signOut();
         updateUI(null);
@@ -92,13 +132,13 @@ public class SignUpActivity extends BaseActivity implements
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            Intent intent = new Intent(this, MainLoggedInActivity.class);
+            Intent intent = new Intent(this, ProfileActivity.class);
             intent.putExtra("E-mail", user.getEmail());
             intent.putExtra("ID", user.getUid());
             startActivity(intent);
         } else {
-            findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
-            findViewById(R.id.SignUp_email_password_fields).setVisibility(View.VISIBLE);
+//            findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
+//            findViewById(R.id.SignUp_email_password_fields).setVisibility(View.VISIBLE);
         }
     }
 
@@ -129,7 +169,9 @@ public class SignUpActivity extends BaseActivity implements
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.email_create_account_button) {
-            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            createAccount(mEmailField.getText().toString(),
+                    mPasswordField.getText().toString());
+            Log.i(TAG, "clicked :");
         }
     }
 

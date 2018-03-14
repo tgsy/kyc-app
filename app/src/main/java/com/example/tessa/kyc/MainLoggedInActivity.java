@@ -2,32 +2,33 @@ package com.example.tessa.kyc;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
+import com.example.tessa.kyc.company.CompanyContent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainLoggedInActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainLoggedInActivity
+        extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        CompanyFragment.OnListFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String userID;
 
-    private TextView emailView;
-    private TextView statusView;
-    private TextView idView;
+    Fragment fragment;
+    Class fragmentClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +39,20 @@ public class MainLoggedInActivity extends AppCompatActivity
         currentUser = mAuth.getCurrentUser();
         userID = currentUser.getUid();
 
-        emailView = (TextView) findViewById(R.id.MainLog_Email_TextView);
-        statusView = (TextView) findViewById(R.id.MainLog_Status_TextView);
-        idView = (TextView) findViewById(R.id.MainLog_ID_TextView);
+        fragmentClass = MainLoggedInFragment.class;
 
-        Intent intent = getIntent();
-        emailView.setText(intent.getStringExtra("E-mail"));
-        idView.setText(intent.getStringExtra("ID"));
-        if (mAuth.getCurrentUser().isEmailVerified()) statusView.setText("[VERIFIED]");
-        else statusView.setText("[UNVERIFIED]");
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.mainLog_container, fragment).commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,13 +78,6 @@ public class MainLoggedInActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_logged_in, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -86,10 +85,11 @@ public class MainLoggedInActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.add_company) {
+            Intent intent = new Intent(this, CompanyActivity.class);
+            startActivity(intent);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -99,23 +99,37 @@ public class MainLoggedInActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_profile) {
-            Intent intent = new Intent(this, ProfileActivity.class);
-            startActivity(intent);
-
-        } else if (id == R.id.nav_companysignup) {
-
-        } else if (id == R.id.nav_preferences) {
-
-        } else if (id == R.id.nav_report) {
-
-        } else if (id == R.id.nav_logout) {
+        if (id == R.id.nav_logout) {
             signOut();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
-        }
+        } else {
+            switch (id) {
+                case R.id.nav_status:
+                    fragmentClass = MainLoggedInFragment.class;
+                    break;
 
+                case R.id.nav_companysignup:
+                    fragmentClass = CompanyFragment.class;
+                    break;
+
+                case R.id.nav_report:
+                    fragmentClass = ReportFragment.class;
+                    break;
+            }
+
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.mainLog_container, fragment).commit();
+            }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -123,5 +137,10 @@ public class MainLoggedInActivity extends AppCompatActivity
 
     private void signOut() {
         mAuth.signOut();
+    }
+
+    @Override
+    public void onListFragmentInteraction(Company item) {
+
     }
 }

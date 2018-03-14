@@ -34,19 +34,19 @@
     <string name="emailpassword_title_text">Log In or Register</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_sign_up">Sign Up</string>
 
     <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
     <string name="auth_failed">authentication failed</string>
     <string name="title_activity_image_upload">ImageUploadActivity</string>
-    <string name="title_activity_main_logged_in">LoggedInActivity</string>
+    <string name="title_activity_main_logged_in">blocktrace</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_profile">Profile</string>
 
 
 </resources>

@@ -1,10 +1,13 @@
 package com.example.tessa.kyc;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -30,14 +33,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 
 public class ProfileActivity extends BaseActivity implements
         View.OnClickListener {
@@ -62,12 +69,16 @@ public class ProfileActivity extends BaseActivity implements
     private StorageReference storageRef;
     private Bitmap imageBitmap;
 
+    private String imageUrl;
+    private String imageKey;
+
     final String TAG = "DED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -91,8 +102,11 @@ public class ProfileActivity extends BaseActivity implements
         Intent intent = getIntent();
         emailView.setText(intent.getStringExtra("E-mail"));
         idView.setText(intent.getStringExtra("ID"));
-        if (mAuth.getCurrentUser().isEmailVerified()) statusView.setText("[VERIFIED]");
-        else statusView.setText("[UNVERIFIED]");
+
+        if (mAuth.getCurrentUser().isEmailVerified())
+            statusView.setText("[VERIFIED]");
+        else
+            statusView.setText("[UNVERIFIED]");
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -111,7 +125,10 @@ public class ProfileActivity extends BaseActivity implements
                 mAuth.getCurrentUser().isEmailVerified())
             verifyEmailButton.setEnabled(false);
 
-        if (mAuth.getCurrentUser().isEmailVerified()) verifyEmailButton.setVisibility(View.INVISIBLE);
+        if (mAuth.getCurrentUser().isEmailVerified())
+            verifyEmailButton.setVisibility(View.INVISIBLE);
+
+        //downloadImageFromFirebase();
 
     }
 
@@ -153,28 +170,22 @@ public class ProfileActivity extends BaseActivity implements
         if (i == R.id.verify_email_button) {
             sendEmailVerification();
         }
-        if (i == R.id.sign_out_button) {
-            mAuth.signOut();
-            Intent intent = new Intent(this, SignUpActivity.class);
-            startActivity(intent);
-        }
         if (i == R.id.Profile_TakePhoto_button) {
             dispatchTakePictureIntent();
 //            takePhotoButton.setText("Retake Photo");
         }
-        if (i == R.id.Profile_UploadImage_button) {
-            if (validateImageUpload()) uploadImagetoFirebase();
-            else validateImageUpload();
-        }
         if (i == R.id.Profile_Submit_button) {
-            if (validateForm()) {
+            if (validateForm()
+                    && validateImageUpload()) {
                 String fn = nameView.getText().toString();
                 String pc = postalCodeView.getText().toString();
                 String id = identifNoView.getText().toString();
                 writeNewUser(fn, pc, id);
-                Toast.makeText(ProfileActivity.this, "Submission Successful, Please wait for your physical token to be delivered", Toast.LENGTH_SHORT).show();
-                mAuth.signOut();
-                Intent intent = new Intent(this, SignUpActivity.class);
+                uploadImagetoFirebase();
+                Toast.makeText(ProfileActivity.this, "Submission Successful", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, MainLoggedInActivity.class);
+                intent.putExtra("E-mail", mAuth.getCurrentUser().getEmail());
+                intent.putExtra("ID", mAuth.getCurrentUser().getUid());
                 startActivity(intent);
             } else {
                 validateForm();
@@ -252,11 +263,12 @@ public class ProfileActivity extends BaseActivity implements
         boolean valid = true;
 
         if (mImageView.getVisibility()==View.GONE) {
-            pleaseUpload.setText("Please upload an image of you holding your identification documents for verification");
+            pleaseUpload.setText("Please upload an image of you holding " +
+                    "your identification documents for verification");
             pleaseUpload.setVisibility(View.VISIBLE);
             valid = false;
-        } else pleaseUpload.setVisibility(View.GONE);
-
+        } else
+            pleaseUpload.setVisibility(View.GONE);
         return valid;
     }
 
@@ -280,6 +292,86 @@ public class ProfileActivity extends BaseActivity implements
         //String userId = user.getUid();
         User nUser = new User(fullName, postalCode, identifNo);
         usersRef.setValue(nUser);
+    }
+
+    public void downloadImageFromFirebase() {
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try {
+                    Toast.makeText(ProfileActivity.this,"Image download successful",Toast.LENGTH_LONG).show();
+                    //userId = dataSnapshot.child("users").child("0sG4Ejo2MNV6l7sxnkSo4rkPqdl1").child("full_name").getValue(String.class);
+                    for (DataSnapshot data: dataSnapshot.child(userID).getChildren()){
+                        imageKey = data.getKey();
+                        imageUrl = data.getValue(String.class);
+                        Log.i(TAG, "image URL: "+imageUrl);
+                    }
+
+                    //String tempimageUri = dataSnapshot.child("hi2").child("-L5tEwmC3HoV_wO5YQjo").getValue(String.class);
+                    //Log.i("Norman", tempimageUri);
+                    /*Uri imageUri = Uri.parse(tempimageUri);
+                    InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                    // Decode the URI into a Bitmap
+                    Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                    // Rescale the selectedImage to display on the phone
+                    Bitmap scaledImage = Bitmap.createScaledBitmap(selectedImage, 512, 512, true);*/
+
+                    //photodownloaded.setImageBitmap(scaledImage);
+
+                    new imageDownloadingFromFirebase().execute(imageUrl);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private class imageDownloadingFromFirebase extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //Create a progressdialog
+            mProgressDialog = new ProgressDialog(ProfileActivity.this);
+            //Set progressdialog title
+            mProgressDialog.setTitle("Fetching image from database");
+            //Set progressdialog message
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... URL) {
+            String imageURL = URL[0];
+            Bitmap bitmap = null;
+
+            try {
+                //Download image from URL
+                InputStream input = new java.net.URL(imageURL).openStream();
+                //Decode Bitmap
+                bitmap = BitmapFactory.decodeStream(input);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+            return bitmap;
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            //Set the bitmap into ImageView
+            mImageView.setImageBitmap(result);
+            mImageView.setVisibility(View.VISIBLE);
+            //Close progress dialog
+            mProgressDialog.dismiss();
+        }
     }
 
 

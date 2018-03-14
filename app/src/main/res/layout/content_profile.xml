@@ -139,17 +139,6 @@
             android:layout_gravity="center"
             android:visibility="gone"/>
 
-        <ImageButton
-            android:id="@+id/Profile_UploadImage_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:onClick="onClick"
-            android:scaleType="centerInside"
-            android:layout_gravity="right"
-            android:src="@drawable/ic_file_upload_black_24dp"
-            android:text="Upload Image" />
-
         <TextView
             android:id="@+id/Profile_pleaseUpload_TextView"
             android:layout_width="match_parent"
@@ -162,19 +151,10 @@
             android:id="@+id/Profile_Submit_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Update"
+            android:text="Next"
             android:layout_gravity="center"
             android:onClick="onClick"
             android:theme="@style/ThemeOverlay.MyDarkButton" />
 
-        <Button
-            android:id="@+id/sign_out_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_out"
-            android:onClick="onClick"
-            android:theme="@style/ThemeOverlay.MyDarkButton" />
-
     </LinearLayout>
-
 </android.support.v4.widget.NestedScrollView>
