@@ -19,7 +19,7 @@ public class User {
     public String address;
     public String postal_code;
     public String mobile_no;
-    public String dob;
+    public String date_of_birth;
     public String gender;
     public String nationality;
     public String id;
@@ -28,11 +28,11 @@ public class User {
     public Date last_updated;
     public String email;
 
-    public User(String fullName, String postalCode, String identifNo) {
+    public User(String fullName, String postalCode, String identifNo, String dob) {
         full_name = fullName;
         postal_code = postalCode;
         id = identifNo;
-        //date_of_birth = dob;
+        date_of_birth = dob;
     }
 
     // [START post_to_map]
@@ -42,6 +42,7 @@ public class User {
         result.put("Full Name", full_name);
         result.put("Postal Code", postal_code);
         result.put("ID No.", id);
+        result.put("Date of Birth", date_of_birth);
         return result;
     }
     // [END post_to_map]

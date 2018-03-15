@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="30dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.tessa.kyc.ProfileActivity"
     tools:showIn="@layout/activity_profile">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50sp"
-        android:layout_marginRight="50sp"
         android:orientation="vertical">
 
         <TextView
@@ -24,6 +23,7 @@
 
         <TextView
             android:id="@+id/Profile_Status_TextView"
+            android:layout_below="@+id/Profile_Email_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -31,6 +31,7 @@
 
         <TextView
             android:id="@+id/Profile_ID_TextView"
+            android:layout_below="@+id/Profile_Status_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -38,21 +39,24 @@
 
         <Button
             android:id="@+id/verify_email_button"
+            android:layout_below="@+id/Profile_ID_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:gravity="right"
             android:text="@string/verify_email"
             android:onClick="onClick"
             android:theme="@style/ThemeOverlay.MyDarkButton" />
 
         <TextView
+            android:id="@+id/Profile_FirstName_TextView"
+            android:layout_below="@+id/verify_email_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
             android:text="First Name"/>
 
         <EditText
             android:id="@+id/Profile_FirstName_EditText"
+            android:layout_below="@+id/Profile_FirstName_TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -61,6 +65,8 @@
             android:singleLine="false" />
 
         <TextView
+            android:id="@+id/Profile_LastName_TextView"
+            android:layout_below="@+id/Profile_FirstName_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -68,11 +74,14 @@
 
         <EditText
             android:id="@+id/Profile_LastName_EditText"
+            android:layout_below="@+id/Profile_LastName_TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
         <TextView
+            android:id="@+id/Profile_Address_TextView"
+            android:layout_below="@+id/Profile_LastName_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -80,12 +89,15 @@
 
         <EditText
             android:id="@+id/Profile_Address_EditText"
+            android:layout_below="@+id/Profile_Address_TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="4"
             android:layout_gravity="center"/>
 
         <TextView
+            android:id="@+id/Profile_PostalCode_TextView"
+            android:layout_below="@+id/Profile_Address_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
@@ -93,37 +105,79 @@
 
         <EditText
             android:id="@+id/Profile_PostalCode_EditText"
+            android:layout_below="@+id/Profile_PostalCode_TextView"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"/>
 
         <TextView
+            android:id="@+id/Profile_DoB_TextView"
+            android:layout_below="@+id/Profile_PostalCode_EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth"/>
+
+        <EditText
+            android:id="@+id/Profile_DoB_Day_EditText"
+            android:layout_below="@+id/Profile_DoB_TextView"
+            android:hint="DD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <EditText
+            android:id="@+id/Profile_DoB_Month_EditText"
+            android:layout_below="@+id/Profile_DoB_TextView"
+            android:layout_toRightOf="@+id/Profile_DoB_Day_EditText"
+            android:hint="MM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/Profile_DoB_Year_EditText"
+            android:layout_below="@+id/Profile_DoB_TextView"
+            android:layout_toRightOf="@+id/Profile_DoB_Month_EditText"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:hint="YYYY" />
+
+        <TextView
+            android:id="@+id/Profile_Identification_TextView"
+            android:layout_below="@+id/Profile_DoB_Year_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Choice of Identification Documents: "/>
 
         <Spinner
             android:id="@+id/Profile_Identification_spinner"
+            android:layout_below="@+id/Profile_Identification_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/Profile_IdentifNo_TextView"
+            android:layout_below="@+id/Profile_Identification_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Identification Number"/>
 
         <EditText
             android:id="@+id/Profile_IdentifNo_EditText"
+            android:layout_below="@+id/Profile_IdentifNo_TextView"
             android:layout_width="200dp"
             android:layout_height="match_parent" />
 
         <TextView
+            android:id="@+id/Profile_Image_TextView"
+            android:layout_below="@+id/Profile_IdentifNo_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Image of verification document"/>
 
         <ImageButton
             android:id="@+id/Profile_TakePhoto_button"
+            android:layout_below="@+id/Profile_IdentifNo_EditText"
+            android:layout_toRightOf="@+id/Profile_Image_TextView"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -134,6 +188,7 @@
 
         <ImageView
             android:id="@+id/Profile_ImageView"
+            android:layout_below="@+id/Profile_TakePhoto_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -141,6 +196,7 @@
 
         <TextView
             android:id="@+id/Profile_pleaseUpload_TextView"
+            android:layout_below="@+id/Profile_ImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="8sp"
@@ -149,6 +205,7 @@
 
         <Button
             android:id="@+id/Profile_Submit_button"
+            android:layout_below="@+id/Profile_pleaseUpload_TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Next"
@@ -156,5 +213,13 @@
             android:onClick="onClick"
             android:theme="@style/ThemeOverlay.MyDarkButton" />
 
-    </LinearLayout>
+        <!--<TextView
+            android:id="@+id/Profile_Key"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/Profile_Submit_button"
+            android:onClick="onClick"
+            />-->
+
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

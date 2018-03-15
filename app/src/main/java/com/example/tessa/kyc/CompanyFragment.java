@@ -1,28 +1,40 @@
 package com.example.tessa.kyc;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * A fragment representing a list of Items.
@@ -39,6 +51,10 @@ public class CompanyFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     RecyclerView recyclerView;
     RecyclerView.Adapter adapt;
+    public static SharedPreferences sharedPref;
+    public static SharedPreferences.Editor editor;
+    public static Context context;
+    List<Company> appliedFor = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,10 +76,14 @@ public class CompanyFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        context = getActivity();
+        sharedPref = context.getSharedPreferences(
+                getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
+        editor = sharedPref.edit();
     }
 
     @Override
@@ -75,11 +95,26 @@ public class CompanyFragment extends Fragment {
         List<Company> list = Arrays.asList(new Gson().
                 fromJson(jsonString, Company[].class));
 
+        for (Company c: list) {
+            Log.i("DED", c.getName());
+        }
+
+        int count = 0;
+
+        for (Company c: list) {
+            if (sharedPref.getBoolean(Integer.toString(c.getId()), false)) {
+                Log.i("DED", count+ ") "+c.getName()+": "+sharedPref.getBoolean(Integer.toString(c.getId()), false));
+                appliedFor.add(c);
+                count++;
+            }
+        }
+        Log.i("DED", "size is "+appliedFor.size());
+
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new CompaniesRecyclerViewAdapter(this.getContext(), list));
+        recyclerView.setAdapter(new CompaniesRecyclerViewAdapter(this.getContext(), appliedFor));
 
         return view;
     }

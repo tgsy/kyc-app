@@ -50,4 +50,11 @@
         android:textSize="20sp"
         android:text="\n\n\nPhysical token is making its way to you"/>
 
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/delivery"/>
+
 </LinearLayout>

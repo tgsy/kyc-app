@@ -1,9 +1,11 @@
 package com.example.tessa.kyc;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,6 +20,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+
+import javax.net.ssl.HttpsURLConnection;
+
 public class SignUpActivity extends BaseActivity implements
         View.OnClickListener {
 
@@ -26,6 +41,12 @@ public class SignUpActivity extends BaseActivity implements
     final String TAG = "DED";
     private EditText mEmailField;
     private EditText mPasswordField;
+
+    private JSONObject token;
+    private JSONObject tokenjson;
+    private PublicKey org_key;
+
+    private final String RegisterURL = "https://shielded-bayou-99151.herokuapp.com/register_user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,9 +192,6 @@ public class SignUpActivity extends BaseActivity implements
         if (i == R.id.email_create_account_button) {
             createAccount(mEmailField.getText().toString(),
                     mPasswordField.getText().toString());
-            Log.i(TAG, "clicked :");
         }
     }
-
-
 }

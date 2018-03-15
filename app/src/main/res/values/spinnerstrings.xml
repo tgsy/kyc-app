@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="identification_array">
-    <item>NRIC</item>
-    <item>Driver's License</item>
-    <item>Passport</item>
-    <item>Birth Certificate</item>
-</string-array>
+    <string-array name="identification_array">
+        <item>NRIC</item>
+        <item>Driver's License</item>
+        <item>Passport</item>
+        <item>Birth Certificate</item>
+    </string-array>
 </resources>

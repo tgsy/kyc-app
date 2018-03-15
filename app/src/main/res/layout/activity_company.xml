@@ -18,21 +18,19 @@
         android:textSize="20dp"/>
 
     <EditText
+        android:id="@+id/company_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Company ID"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left" />
-
     <Button
+        android:id="@+id/company_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:text="Submit"
         android:textAllCaps="true"
+        android:onClick="onClick"
         android:theme="@style/ThemeOverlay.MyDarkButton"/>
 
 </LinearLayout>

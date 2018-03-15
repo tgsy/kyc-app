@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -42,9 +43,21 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class ProfileActivity extends BaseActivity implements
         View.OnClickListener {
@@ -61,6 +74,9 @@ public class ProfileActivity extends BaseActivity implements
     private EditText nameView;
     private EditText postalCodeView;
     private EditText identifNoView;
+    private EditText ddView;
+    private EditText mmView;
+    private EditText yyyyView;
     private ImageView mImageView;
     private TextView pleaseUpload;
     private Spinner mSpinner;
@@ -71,6 +87,11 @@ public class ProfileActivity extends BaseActivity implements
 
     private String imageUrl;
     private String imageKey;
+
+    final String RegisterURL = "https://kyc-project.herokuapp.com/register_kyc";
+
+    JSONObject token;
+    JSONObject tokenjson;
 
     final String TAG = "DED";
 
@@ -93,11 +114,17 @@ public class ProfileActivity extends BaseActivity implements
         nameView = (EditText) findViewById(R.id.Profile_FirstName_EditText);
         postalCodeView = (EditText) findViewById(R.id.Profile_PostalCode_EditText);
         identifNoView = (EditText) findViewById(R.id.Profile_IdentifNo_EditText);
+        ddView = (EditText) findViewById(R.id.Profile_DoB_Day_EditText);
+        mmView = (EditText) findViewById(R.id.Profile_DoB_Month_EditText);
+        yyyyView = (EditText) findViewById(R.id.Profile_DoB_Year_EditText);
         mImageView = (ImageView) findViewById(R.id.Profile_ImageView);
         pleaseUpload = (TextView) findViewById(R.id.Profile_pleaseUpload_TextView);
         mSpinner = (Spinner) findViewById(R.id.Profile_Identification_spinner);
         takePhotoButton = (ImageButton) findViewById(R.id.Profile_TakePhoto_button);
         verifyEmailButton = (Button) findViewById(R.id.verify_email_button);
+
+        tokenjson = new JSONObject();
+        token = new JSONObject();
 
         Intent intent = getIntent();
         emailView.setText(intent.getStringExtra("E-mail"));
@@ -180,9 +207,15 @@ public class ProfileActivity extends BaseActivity implements
                 String fn = nameView.getText().toString();
                 String pc = postalCodeView.getText().toString();
                 String id = identifNoView.getText().toString();
-                writeNewUser(fn, pc, id);
+                String dob = ddView.getText().toString() + "/" +
+                        mmView.getText().toString() + "/" +
+                        yyyyView.getText().toString();
+                writeNewUser(fn, pc, id, dob);
                 uploadImagetoFirebase();
-                Toast.makeText(ProfileActivity.this, "Submission Successful", Toast.LENGTH_SHORT).show();
+                new PostTask().execute(RegisterURL);
+                Log.i(TAG, "Posted Task YAY");
+                Toast.makeText(ProfileActivity.this,
+                        "Registration Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, MainLoggedInActivity.class);
                 intent.putExtra("E-mail", mAuth.getCurrentUser().getEmail());
                 intent.putExtra("ID", mAuth.getCurrentUser().getUid());
@@ -287,10 +320,8 @@ public class ProfileActivity extends BaseActivity implements
         return valid;
     }
 
-    private void writeNewUser(String fullName, String postalCode, String identifNo) {
-        //FirebaseUser user =  mAuth.getCurrentUser();
-        //String userId = user.getUid();
-        User nUser = new User(fullName, postalCode, identifNo);
+    private void writeNewUser(String fullName, String postalCode, String identifNo, String dob) {
+        User nUser = new User(fullName, postalCode, identifNo, dob);
         usersRef.setValue(nUser);
     }
 
@@ -308,7 +339,7 @@ public class ProfileActivity extends BaseActivity implements
                     }
 
                     //String tempimageUri = dataSnapshot.child("hi2").child("-L5tEwmC3HoV_wO5YQjo").getValue(String.class);
-                    //Log.i("Norman", tempimageUri);
+                    //Log.i(TAG, tempimageUri);
                     /*Uri imageUri = Uri.parse(tempimageUri);
                     InputStream imageStream = getContentResolver().openInputStream(imageUri);
                     // Decode the URI into a Bitmap
@@ -356,7 +387,7 @@ public class ProfileActivity extends BaseActivity implements
                 InputStream input = new java.net.URL(imageURL).openStream();
                 //Decode Bitmap
                 bitmap = BitmapFactory.decodeStream(input);
-            }catch (Exception ex){
+            } catch (Exception ex){
                 ex.printStackTrace();
             }
             return bitmap;
@@ -374,5 +405,74 @@ public class ProfileActivity extends BaseActivity implements
         }
     }
 
+    class PostTask extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            //URL to call
+            String urlString = params[0];
 
+            HttpURLConnection urlConnection = null;
+
+            try {
+                URL url = new URL(urlString);
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("name",nameView.getText().toString());
+                jsonObject.put("postal_code", postalCodeView.getText().toString());
+                jsonObject.put("id_number",identifNoView.getText().toString());
+                jsonObject.put("dob",ddView.getText().toString()
+                        +"/"+mmView.getText().toString()
+                        +"/"+yyyyView.getText().toString());
+
+                Log.e(TAG,jsonObject.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                //set the request method to Post
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type","application/json");
+                urlConnection.setDoInput(true);
+                urlConnection.setDoOutput(true);
+
+
+                //output the stream to the server
+                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.
+                        getOutputStream());
+                wr.write(jsonObject.toString());
+                wr.flush();
+
+                int responseCode = urlConnection.getResponseCode();
+
+
+                if (responseCode == HttpsURLConnection.HTTP_OK){
+                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder sb = new StringBuilder("");
+                    String line = "";
+
+                    while ((line = in.readLine())!=null){
+                        sb.append(line);
+                    }
+                    in.close();
+                    Log.i(TAG,sb.toString());
+                    return sb.toString();
+                }
+                else {
+                    return new String("false : " + responseCode);
+                }
+                // urlConnection.connect();
+            }catch (Exception ex){
+                return new String("Exception: " + ex.getMessage());
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(ProfileActivity.this, result, Toast.LENGTH_LONG).show();
+            try {
+                token = new JSONObject(result);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+
+    }
 }

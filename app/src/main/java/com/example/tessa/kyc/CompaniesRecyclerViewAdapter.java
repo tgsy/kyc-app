@@ -1,6 +1,8 @@
 package com.example.tessa.kyc;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.tessa.kyc.CompanyFragment.OnListFragmentInteractionListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +26,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
     public static Context context;
     public static List<Company> mCompanies;
     public static OnListFragmentInteractionListener mListener;
+
 
     public CompaniesRecyclerViewAdapter(Context context) {
         super();
