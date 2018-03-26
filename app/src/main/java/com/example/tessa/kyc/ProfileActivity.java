@@ -61,6 +61,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class ProfileActivity extends BaseActivity implements
         View.OnClickListener {
+    private static final int COMPANY_COUNT = 1004;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -323,6 +324,11 @@ public class ProfileActivity extends BaseActivity implements
     private void writeNewUser(String fullName, String postalCode, String identifNo, String dob) {
         User nUser = new User(fullName, postalCode, identifNo, dob);
         usersRef.setValue(nUser);
+
+        int count = 1000;
+        while (count<COMPANY_COUNT) {
+            usersRef.child("company").child(String.valueOf(count)).setValue("false");
+        }
     }
 
     public void downloadImageFromFirebase() {

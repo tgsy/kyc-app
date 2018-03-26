@@ -55,7 +55,6 @@ public class SignUpActivity extends BaseActivity implements
         setContentView(R.layout.activity_sign_up);
 
         mAuth = FirebaseAuth.getInstance();
-
         mEmailField = (EditText) findViewById(R.id.SignUp_email);
         mPasswordField = (EditText) findViewById(R.id.SignUp_password);
     }

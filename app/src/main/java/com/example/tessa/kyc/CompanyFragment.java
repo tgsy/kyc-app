@@ -18,6 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -32,9 +40,12 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import static java.lang.Thread.sleep;
 
 /**
  * A fragment representing a list of Items.
@@ -43,19 +54,15 @@ import javax.net.ssl.HttpsURLConnection;
  * interface.
  */
 public class CompanyFragment extends Fragment {
-
-    // TODO: Customize parameter argument names
+    // Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+    // Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapt;
     public static SharedPreferences sharedPref;
     public static SharedPreferences.Editor editor;
     public static Context context;
-    List<Company> appliedFor = new ArrayList<>();
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -79,7 +86,6 @@ public class CompanyFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
         context = getActivity();
         sharedPref = context.getSharedPreferences(
                 getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
@@ -91,30 +97,11 @@ public class CompanyFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_company_list, container, false);
 
-        String jsonString = parseJson(R.raw.banks);
-        List<Company> list = Arrays.asList(new Gson().
-                fromJson(jsonString, Company[].class));
-
-        for (Company c: list) {
-            Log.i("DED", c.getName());
-        }
-
-        int count = 0;
-
-        for (Company c: list) {
-            if (sharedPref.getBoolean(Integer.toString(c.getId()), false)) {
-                Log.i("DED", count+ ") "+c.getName()+": "+sharedPref.getBoolean(Integer.toString(c.getId()), false));
-                appliedFor.add(c);
-                count++;
-            }
-        }
-        Log.i("DED", "size is "+appliedFor.size());
-
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new CompaniesRecyclerViewAdapter(this.getContext(), appliedFor));
+        recyclerView.setAdapter(new CompaniesRecyclerViewAdapter(this.getContext()));
 
         return view;
     }
@@ -178,4 +165,5 @@ public class CompanyFragment extends Fragment {
         }
         return output;
     }
+
 }

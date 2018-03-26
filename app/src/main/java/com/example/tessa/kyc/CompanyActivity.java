@@ -12,6 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -24,26 +27,32 @@ import java.util.List;
 
 public class CompanyActivity extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+
     int companyID;
     EditText companyIDEditText;
     Button signUpButton;
 
     HashMap<Integer,String> validCompanies;
 
-    SharedPreferences sharedPref;
-    SharedPreferences.Editor editor;
+/*    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
 
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         companyIDEditText = (EditText) findViewById(R.id.company_id);
         signUpButton = (Button) findViewById(R.id.company_submit);
 
-        sharedPref = this.getSharedPreferences(
+        /*sharedPref = this.getSharedPreferences(
                 getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
-        editor = sharedPref.edit();
+        editor = sharedPref.edit();*/
 
         String jsonString = parseJson(R.raw.banks);
         List<Company> list = Arrays.asList(new Gson().
@@ -68,13 +77,13 @@ public class CompanyActivity extends AppCompatActivity {
         if (validateForm()) {
             companyID = Integer.valueOf(companyid.getText().toString());
             if (validCompanies.containsKey(companyID)) {
-                editor.putBoolean(Integer.toString(companyID), true);
-                editor.commit();
+                /*editor.putBoolean(Integer.toString(companyID), true);
+                editor.commit();*/
                 /*Toast.makeText(CompanyActivity.this,
                         "Sign Up for " + validCompanies.get(companyID) + " successful",
                         Toast.LENGTH_SHORT).show();*/
+                mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("company").child(Integer.toString(companyID)).setValue(true);
                 Intent intent = new Intent(this, ScanTokenActivity.class);
-//                intent.putExtra("MainLoggedInActivity", "Company");
                 intent.putExtra("Company", validCompanies.get(companyID));
                 intent.putExtra("Origin", "Company");
                 startActivity(intent);

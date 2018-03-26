@@ -2,26 +2,26 @@
  { "id" : "1000",
     "name": "DBS",
     "description": "DBS is a leading financial services group in Asia, with over 280 branches across 18 markets. Our aim is to become “The Asian Bank of Choice for the new Asia”. We are an Asia-centric commercial bank focused on harnessing the region’s long-term potential as the centre of economic gravity shifts eastwards to Asia. To differentiate ourselves, we have developed a unique brand of banking, Banking the Asian Way. We seek to provide a kind of banking that's joyful and trustworthy as we help to transform this region that we live in. We are distinct from local lenders or global players. As an Asian specialist, we have the reach and sophistication to outcompete local lenders, and deep Asian insights that distinguish us from global competitors.",
-    "image": "dbs"
+    "image": "dbs.png"
  },
  {  "id" : "1001",
     "name": "OCBC Bank",
     "description": "OCBC Bank is the longest established Singapore bank, formed in 1932 from the merger of three local banks, the oldest of which was founded in 1912. It is now the second largest financial services group in Southeast Asia by assets and one of the world’s most highly-rated banks, with an Aa1 rating from Moody’s. Recognised for its financial strength and stability, OCBC Bank is consistently ranked among the World’s Top 50 Safest Banks by Global Finance and has been named Best Managed Bank in Singapore and the Asia Pacific by The Asian Banker.",
-    "image": "ocbc"
+    "image": "ocbc.png"
   },
   { "id": "1002",
     "name": "United Overseas Bank",
     "description": "UOB is committed to building lasting relationships with our customers, through product and market expertise, and our promise to always do what is right. With a well-established global presence today and particularly in Asia, UOB has understanding of Asian markets, corporate culture and business mindsets, which is matched by few. Our strong foothold in Singapore, Malaysia, Indonesia, Thailand and China is well-placed to create greater access and growth in this region, for our customers.",
-    "image": "uob"
+    "image": "uob.png"
   },
   { "id": "1003",
     "name": "HSBC",
     "description": "Founded in 1865 to finance trade between Asia and the West, today HSBC is one of the world’s largest banking and financial services organisations serving around 38 million customers worldwide. Our aim is to be acknowledged as the world’s leading and most respected international bank.",
-    "image": "hsbc"
+    "image": "hsbc.jpg"
   },
   { "id":"1004",
     "name": "Standard Chartered",
     "description": "Standard Chartered Bank in Singapore is part of an international banking group, with more than 150 years of history in some of the world's most dynamic markets. Our purpose is to drive commerce and prosperity through our unique diversity, and our heritage and values are expressed in our brand promise, Here for good.",
-    "image": "standardchartered"
+    "image": "standard-chartered.png"
   }
 ]
