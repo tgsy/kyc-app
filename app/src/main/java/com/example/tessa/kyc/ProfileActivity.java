@@ -326,9 +326,13 @@ public class ProfileActivity extends BaseActivity implements
         usersRef.setValue(nUser);
 
         int count = 1000;
-        while (count<COMPANY_COUNT) {
+        while (count<=COMPANY_COUNT) {
             usersRef.child("company").child(String.valueOf(count)).setValue("false");
+            count++;
         }
+
+        usersRef.child("status").setValue("0");
+        usersRef.child("uid").setValue(mAuth.getCurrentUser().getUid());
     }
 
     public void downloadImageFromFirebase() {

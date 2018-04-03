@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_centerVertical="true"
+    android:paddingTop="20dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <TextView
         android:id="@+id/MainLog_Welcome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
+        android:textAllCaps="true"
         android:text="Welcome!\n\n You are currently logged in as" />
 
     <TextView
@@ -18,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:text="test"/>
 
     <TextView
@@ -28,7 +33,7 @@
         android:layout_below="@+id/MainLog_Email_TextView"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:text="test"/>
 
     <TextView
@@ -38,23 +43,27 @@
         android:layout_below="@+id/MainLog_Status_TextView"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:text="test"/>
 
     <TextView
+        android:id="@+id/MainLog_TokenStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/MainLog_ID_TextView"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="16sp"
+        android:textAllCaps="true"
         android:text="\n\n\nPhysical token is making its way to you"/>
 
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/MainLog_TokenStatus"
         android:layout_gravity="center"
         android:scaleType="centerInside"
         android:src="@drawable/delivery"/>
 
-</LinearLayout>
+</RelativeLayout>

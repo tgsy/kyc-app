@@ -14,15 +14,16 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User {
 
+    public String uid;
     public String title;
     public String full_name;
-    public String address;
     public String postal_code;
-    public String mobile_no;
     public String date_of_birth;
+    public String id;
+    public String address;
+    public String mobile_no;
     public String gender;
     public String nationality;
-    public String id;
     public String id_type;
     public String marital_status;
     public Date last_updated;
@@ -48,7 +49,5 @@ public class User {
     // [END post_to_map]
 
 }
-// [END post_class]
-
 
 

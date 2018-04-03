@@ -1,15 +1,12 @@
 package com.example.tessa.kyc;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,9 +15,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +29,13 @@ public class CompanyActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
-    int companyID;
-    EditText companyIDEditText;
-    Button signUpButton;
+    private int companyID;
+    private EditText companyIDEditText;
+    private Button signUpButton;
 
-    HashMap<Integer,String> validCompanies;
+    private HashMap<Integer,String> validCompanies;
+
+    private static final File FILE = new File("/storage/emulated/0/blocktrace/banks.json");
 
 /*    SharedPreferences sharedPref;
     SharedPreferences.Editor editor;*/
@@ -54,7 +55,7 @@ public class CompanyActivity extends AppCompatActivity {
                 getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
         editor = sharedPref.edit();*/
 
-        String jsonString = parseJson(R.raw.banks);
+        String jsonString = parseJson(FILE);
         List<Company> list = Arrays.asList(new Gson().
                 fromJson(jsonString, Company[].class));
         validCompanies = new HashMap<>();
@@ -77,11 +78,6 @@ public class CompanyActivity extends AppCompatActivity {
         if (validateForm()) {
             companyID = Integer.valueOf(companyid.getText().toString());
             if (validCompanies.containsKey(companyID)) {
-                /*editor.putBoolean(Integer.toString(companyID), true);
-                editor.commit();*/
-                /*Toast.makeText(CompanyActivity.this,
-                        "Sign Up for " + validCompanies.get(companyID) + " successful",
-                        Toast.LENGTH_SHORT).show();*/
                 mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("company").child(Integer.toString(companyID)).setValue(true);
                 Intent intent = new Intent(this, ScanTokenActivity.class);
                 intent.putExtra("Company", validCompanies.get(companyID));
@@ -93,17 +89,23 @@ public class CompanyActivity extends AppCompatActivity {
         }
     }
 
-    private String parseJson(int resource) {
+    private String parseJson(File file) {
         String line;
         String output = "";
-        InputStream inputStream = getResources().openRawResource(resource);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
-            while ((line = reader.readLine()) != null) {
-                output = output + line;
+            FileInputStream fileInputStream = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, "UTF-8"));
+            try {
+                while ((line = reader.readLine()) != null) {
+                    output += line;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return output;
     }

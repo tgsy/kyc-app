@@ -33,6 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_gravity="center"
+            android:textColor="@color/colorAccent"
+            android:textAllCaps="true"
+            android:textSize="16sp"
             android:text="@string/nfc_tap_tag"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"/>

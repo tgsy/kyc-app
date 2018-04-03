@@ -3,6 +3,9 @@ package com.example.tessa.kyc;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
@@ -17,33 +20,33 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class ScanTokenActivity extends AppCompatActivity implements DialogListener {
+public class ScanTokenActivity extends AppCompatActivity {//implements DialogListener {
 
     JSONObject token;
     JSONObject tokenjson;
     PublicKey org_key;
 
-    public static final String TAG = MainActivity.class.getSimpleName();
+    Tag TAG;
     final String DED = "DED";
+    public static final String MIME_TEXT_PLAIN = "text/plain";
 
     final String getKeyURL = null;
 
-    private WriteNFCFragment mWriteNfcFragment;
-    private ReadNFCFragment mReadNfcFragment;
     private NfcAdapter mNfcAdapter;
-
-    private boolean isDialogDisplayed = false;
-    private boolean isWrite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +57,59 @@ public class ScanTokenActivity extends AppCompatActivity implements DialogListen
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        if (getIntent().getExtras().getString("Origin").equalsIgnoreCase("Company")) {
-            showReadFragment();
-
-        } else if (getIntent().getExtras().getString("Origin").equalsIgnoreCase("Report")) {
+        if (mNfcAdapter == null) {
+            Toast.makeText(ScanTokenActivity.this,
+                    "This device does not support NFC",
+                    Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        else if (!mNfcAdapter.isEnabled()) {
+            Toast.makeText(ScanTokenActivity.this,
+                    "NFC is disabled. Please allow it in device settings and try again",
+                    Toast.LENGTH_SHORT).show();
+        }
+        Log.i("NFC", "on create");
 
     }
-    public void onClick(View view) {
-        if (getIntent().getExtras().getString("Origin").equalsIgnoreCase("Company")) {
-            Toast.makeText(ScanTokenActivity.this,
-                    "Sign Up for " + getIntent().getExtras().getString("Company") + " successful",
-                    Toast.LENGTH_SHORT).show();
 
-        } else if (getIntent().getExtras().getString("Origin").equalsIgnoreCase("Report")) {
-            Toast.makeText(ScanTokenActivity.this,
-                    "Report Successful",
-                    Toast.LENGTH_SHORT).show();
+    public void onResume()
+    {
+        Log.i("NFC", "on resume");
+        super.onResume();
+        Intent intent = getIntent();
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
+            TAG = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            try {
+                //write("this is payload text", TAG);
+                finish();
+            }
+            catch(Exception e)
+            {
+
+            }
         }
+    }
 
+    private NdefRecord createRecord(String mimeType, String text) throws UnsupportedEncodingException {
+        Log.i("NFC", "createrec");
+
+        NdefRecord recordNFC = new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "my/type".getBytes(Charset.forName("US-ASCII")), new byte[0], text.getBytes(Charset.forName("US-ASCII")));
+        return recordNFC;
+    }
+
+    private void write(String mimeType, String text, Tag tag) throws IOException, FormatException {
+        Log.i("NFC", "writec");
+
+        NdefRecord[] records = { createRecord(mimeType, text) };
+        NdefMessage message = new NdefMessage(records);
+        Ndef ndef = Ndef.get(tag);
+        ndef.connect();
+        ndef.writeNdefMessage(message);
+        ndef.close();
+    }
+
+    public void onClick(View view) {
         Intent intent = new Intent(this, MainLoggedInActivity.class);
         startActivity(intent);
     }
@@ -209,86 +246,5 @@ public class ScanTokenActivity extends AppCompatActivity implements DialogListen
 //
 //    }
 
-    @Override
-    public void onDialogDisplayed() {
-        isDialogDisplayed = true;
-    }
 
-    @Override
-    public void onDialogDismissed() {
-        isDialogDisplayed = false;
-        isWrite = false;
-    }
-
-    private void showReadFragment() {
-        mReadNfcFragment = (ReadNFCFragment) getFragmentManager().findFragmentByTag(ReadNFCFragment.TAG);
-
-        if (mReadNfcFragment == null) {
-
-            mReadNfcFragment = ReadNFCFragment.newInstance();
-        }
-        mReadNfcFragment.show(getFragmentManager(),ReadNFCFragment.TAG);
-    }
-
-    private void showWriteFragment() {
-
-        isWrite = true;
-
-        mWriteNfcFragment = (WriteNFCFragment) getFragmentManager().findFragmentByTag(WriteNFCFragment.TAG);
-
-        if (mWriteNfcFragment == null) {
-
-            mWriteNfcFragment = WriteNFCFragment.newInstance();
-        }
-        mWriteNfcFragment.show(getFragmentManager(),WriteNFCFragment.TAG);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        IntentFilter techDetected = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
-        IntentFilter[] nfcIntentFilter = new IntentFilter[]{techDetected,tagDetected,ndefDetected};
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        if(mNfcAdapter!= null)
-            mNfcAdapter.enableForegroundDispatch(this, pendingIntent, nfcIntentFilter, null);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(mNfcAdapter!= null)
-            mNfcAdapter.disableForegroundDispatch(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-        Log.d(TAG, "onNewIntent: "+intent.getAction());
-
-        if(tag != null) {
-            Toast.makeText(this, getString(R.string.nfc_tag_detected), Toast.LENGTH_SHORT).show();
-            Ndef ndef = Ndef.get(tag);
-
-            if (isDialogDisplayed) {
-
-                if (isWrite) {
-
-                    //String messageToWrite = mEtMessage.getText().toString();
-                    //mNfcWriteFragment = (NFCWriteFragment) getFragmentManager().findFragmentByTag(NFCWriteFragment.TAG);
-                    //mNfcWriteFragment.onNfcDetected(ndef,messageToWrite);
-
-                } else {
-                    mReadNfcFragment = (ReadNFCFragment)getFragmentManager().findFragmentByTag(ReadNFCFragment.TAG);
-                    mReadNfcFragment.onNfcDetected(ndef);
-                }
-            }
-        }
-    }
 }

@@ -42,6 +42,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textAllCaps="true"
             android:text="@string/nfc_tap_tag"/>
 
     </LinearLayout>

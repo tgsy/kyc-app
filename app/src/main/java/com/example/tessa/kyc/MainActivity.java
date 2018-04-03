@@ -49,6 +49,7 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
     }
 
+
 /*    public void onLogin(View view){
         Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);

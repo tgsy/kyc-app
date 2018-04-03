@@ -43,7 +43,7 @@ public class ReadNFCFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (ScanTokenActivity) context;
+        //mListener = (ScanTokenActivity) context;
         mListener.onDialogDisplayed();
     }
 
@@ -66,7 +66,6 @@ public class ReadNFCFragment extends DialogFragment {
             Log.i("DED", "readFromNFC: "+message);
             mTvMessage.setText(message);
             ndef.close();
-
         } catch (IOException | FormatException e) {
             e.printStackTrace();
 

@@ -8,6 +8,7 @@ import android.nfc.NdefRecord;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,7 @@ public class WriteNFCFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (ScanTokenActivity) context;
+        //mListener = (ScanTokenActivity) context;
         mListener.onDialogDisplayed();
     }
 
@@ -69,11 +70,13 @@ public class WriteNFCFragment extends DialogFragment {
 
             try {
                 ndef.connect();
+                Log.i("NFC", "CONNECTED");
                 NdefRecord mimeRecord = NdefRecord.createMime("text/plain", message.getBytes(Charset.forName("US-ASCII")));
                 ndef.writeNdefMessage(new NdefMessage(mimeRecord));
                 ndef.close();
                 //Write Successful
                 mTvMessage.setText(getString(R.string.nfc_write_success));
+                Log.i("NFC", "WRITE SUCCESS");
 
             } catch (IOException | FormatException e) {
                 e.printStackTrace();

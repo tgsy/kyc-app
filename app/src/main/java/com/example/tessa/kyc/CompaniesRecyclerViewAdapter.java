@@ -1,8 +1,8 @@
 package com.example.tessa.kyc;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.tessa.kyc.CompanyFragment.OnListFragmentInteractionListener;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,8 +24,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,13 +39,13 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<CompaniesRecyclerViewAdapter.ViewHolder> {
+public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<CompaniesRecyclerViewAdapter.ViewHolder> { //FirebaseRecyclerAdapter {
 
     public static Context context;
-    private static List<Company> mCompanies = new ArrayList<>();
+    private static List<Company> mCompanies;
     private static OnListFragmentInteractionListener mListener;
 
-    private static HashMap<Integer, Boolean> appliedfor = new HashMap<>();
+    private static HashMap<Integer, Boolean> appliedfor;
     List<Company> list;
 
     private FirebaseAuth mAuth;
@@ -51,15 +53,35 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private StorageReference mImageRef = mStorageRef.child("companylogos");
 
+    private static final File FILE = new File("/storage/emulated/0/blocktrace/banks.json");
+
+   /* private static Query query = FirebaseDatabase.getInstance()
+            .getReference()
+                .child("company")
+                .limitToLast(50);
+
+    private static FirebaseRecyclerOptions<Company> options = new FirebaseRecyclerOptions.Builder<Company>()
+            .setQuery(query, Company.class)
+                .build();*/
+
     public CompaniesRecyclerViewAdapter(Context context) {
+        /*super(options);*/
+
         this.context = context;
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        String jsonString = parseJson(R.raw.banks);
+        mCompanies = new ArrayList<>();
+        appliedfor = new HashMap<>();
+
+        //String jsonString = parseJson(R.raw.banks);
+        String jsonString = parseJson(FILE);
+        Log.i("DED","jsonstring: "+ jsonString);
+
         list = Arrays.asList(new Gson().fromJson(jsonString, Company[].class));
 
+        Log.i("DED", list.size()+"size");
         for (Company c: list) {
             getDataFromFirebase(c);
             if (appliedfor.isEmpty());
@@ -69,6 +91,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
             }
             Log.i("DED","size in recyclerview="+ mCompanies.size());
         }
+
     }
 
     @Override
@@ -79,12 +102,11 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mCompanies.get(position);
        /* int resID = CompaniesRecyclerViewAdapter.context.getResources().getIdentifier(mCompanies.get(position).image, "drawable", context.getPackageName());
         holder.mImageView.setImageResource(resID);*/
         Glide.with(context /* context */)
-                .using(new FirebaseImageLoader())
                 .load(mImageRef.child(mCompanies.get(position).getImage()))
                 .into(holder.mImageView);
         holder.mIdView.setText(String.valueOf(mCompanies.get(position).id+"     "+mCompanies.get(position).name));
@@ -138,7 +160,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
                         if (dataSnapshot.child(cid).getValue().toString().equalsIgnoreCase("true")) {
                             appliedfor.put(Integer.valueOf(cid), true);
                             for (Company c: list) {
-                                if (String.valueOf(c.getId()).equalsIgnoreCase(cid)) {
+                                if (String.valueOf(c.getId()).equalsIgnoreCase(cid) && !mCompanies.contains(c)) {
                                     mCompanies.add(c);
                                     notifyDataSetChanged();
                                 }
@@ -150,17 +172,23 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
                 });
     }
 
-    private String parseJson(int resource) {
+    private String parseJson(File file) {
         String line;
         String output = "";
-        InputStream inputStream = context.getResources().openRawResource(resource);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
-            while ((line = reader.readLine()) != null) {
-                output += line;
+            FileInputStream fileInputStream = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, "UTF-8"));
+            try {
+                while ((line = reader.readLine()) != null) {
+                    output += line;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return output;
     }

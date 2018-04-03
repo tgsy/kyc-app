@@ -1,58 +1,21 @@
 package com.example.tessa.kyc;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import static java.lang.Thread.sleep;
-
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class CompanyFragment extends Fragment {
     // Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -60,13 +23,14 @@ public class CompanyFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     RecyclerView recyclerView;
-    public static SharedPreferences sharedPref;
-    public static SharedPreferences.Editor editor;
+    /*public static SharedPreferences sharedPref;
+    public static SharedPreferences.Editor editor;*/
     public static Context context;
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+    public static CompaniesRecyclerViewAdapter adapter;
+
+    @VisibleForTesting
+    public ProgressDialog mProgressDialog;
+
     public CompanyFragment() {
     }
 
@@ -87,21 +51,25 @@ public class CompanyFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         context = getActivity();
-        sharedPref = context.getSharedPreferences(
+        /*sharedPref = context.getSharedPreferences(
                 getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
-        editor = sharedPref.edit();
+        editor = sharedPref.edit();*/
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_company_list, container, false);
+        showProgressDialog();
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        adapter = new CompaniesRecyclerViewAdapter(this.getContext());
+
+        recyclerView = view.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new CompaniesRecyclerViewAdapter(this.getContext()));
+        recyclerView.setAdapter(adapter);
+        hideProgressDialog();
 
         return view;
     }
@@ -136,34 +104,36 @@ public class CompanyFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Company item);
     }
 
-    private String parseJson(int resource) {
-        String line;
-        String output = "";
-        InputStream inputStream = getResources().openRawResource(resource);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        try {
-            while ((line = reader.readLine()) != null) {
-                output = output + line;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(context);
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
         }
-        return output;
+
+        mProgressDialog.show();
     }
 
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+   /* @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }*/
 }
