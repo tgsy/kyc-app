@@ -263,7 +263,7 @@ public class ProfileActivity extends BaseActivity implements
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         //Get a URL to the uploaded content
                         downloadUri = taskSnapshot.getDownloadUrl();
-                        usersRef.push().setValue(downloadUri.toString());
+                        usersRef.child("image").setValue(downloadUri.toString());
                         //mDatabase.child(userID).push().setValue(downloadUri.toString());
                         Toast.makeText(getApplicationContext(), "Image Upload Successful",
                                 Toast.LENGTH_SHORT).show();
@@ -331,88 +331,10 @@ public class ProfileActivity extends BaseActivity implements
             count++;
         }
 
-        usersRef.child("status").setValue("0");
+        usersRef.child("status").setValue(0);
         usersRef.child("uid").setValue(mAuth.getCurrentUser().getUid());
-    }
-
-    public void downloadImageFromFirebase() {
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                try {
-                    Toast.makeText(ProfileActivity.this,"Image download successful",Toast.LENGTH_LONG).show();
-                    //userId = dataSnapshot.child("users").child("0sG4Ejo2MNV6l7sxnkSo4rkPqdl1").child("full_name").getValue(String.class);
-                    for (DataSnapshot data: dataSnapshot.child(userID).getChildren()){
-                        imageKey = data.getKey();
-                        imageUrl = data.getValue(String.class);
-                        Log.i(TAG, "image URL: "+imageUrl);
-                    }
-
-                    //String tempimageUri = dataSnapshot.child("hi2").child("-L5tEwmC3HoV_wO5YQjo").getValue(String.class);
-                    //Log.i(TAG, tempimageUri);
-                    /*Uri imageUri = Uri.parse(tempimageUri);
-                    InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                    // Decode the URI into a Bitmap
-                    Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                    // Rescale the selectedImage to display on the phone
-                    Bitmap scaledImage = Bitmap.createScaledBitmap(selectedImage, 512, 512, true);*/
-
-                    //photodownloaded.setImageBitmap(scaledImage);
-
-                    new imageDownloadingFromFirebase().execute(imageUrl);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private class imageDownloadingFromFirebase extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            //Create a progressdialog
-            mProgressDialog = new ProgressDialog(ProfileActivity.this);
-            //Set progressdialog title
-            mProgressDialog.setTitle("Fetching image from database");
-            //Set progressdialog message
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(false);
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... URL) {
-            String imageURL = URL[0];
-            Bitmap bitmap = null;
-
-            try {
-                //Download image from URL
-                InputStream input = new java.net.URL(imageURL).openStream();
-                //Decode Bitmap
-                bitmap = BitmapFactory.decodeStream(input);
-            } catch (Exception ex){
-                ex.printStackTrace();
-            }
-            return bitmap;
-
-
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            //Set the bitmap into ImageView
-            mImageView.setImageBitmap(result);
-            mImageView.setVisibility(View.VISIBLE);
-            //Close progress dialog
-            mProgressDialog.dismiss();
-        }
+        usersRef.child("token_access").setValue(0);
+        usersRef.child("email").setValue(emailView.getText());
     }
 
     class PostTask extends AsyncTask<String,Void,String> {
@@ -483,6 +405,5 @@ public class ProfileActivity extends BaseActivity implements
                 ex.printStackTrace();
             }
         }
-
     }
 }

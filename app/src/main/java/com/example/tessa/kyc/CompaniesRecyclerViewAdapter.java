@@ -1,6 +1,7 @@
 package com.example.tessa.kyc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -129,7 +130,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
         return mCompanies.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final View mView;
         private final ImageView mImageView;
         private final TextView mIdView;
@@ -147,6 +148,15 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
         @Override
         public String toString() {
             return super.toString() + " " + mContentView.getText() + "'";
+        }
+
+        @Override
+        public void onClick(View v) {
+            Log.i("DED","recyclerviewonclick");
+            Intent intent = new Intent(context, CompanyLoginActivity.class);
+            intent.putExtra("Company Name", mItem.getName());
+            intent.putExtra("Company Logo", mItem.getImage());
+            context.getApplicationContext().startActivity(intent);
         }
     }
 

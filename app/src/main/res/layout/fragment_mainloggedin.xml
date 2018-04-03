@@ -55,7 +55,7 @@
         android:textAlignment="center"
         android:textSize="16sp"
         android:textAllCaps="true"
-        android:text="\n\n\nPhysical token is making its way to you"/>
+        android:text="Obtaining Token Status..."/>
 
     <ImageView
         android:layout_width="200dp"
@@ -64,6 +64,6 @@
         android:layout_below="@+id/MainLog_TokenStatus"
         android:layout_gravity="center"
         android:scaleType="centerInside"
-        android:src="@drawable/delivery"/>
+        android:src="@drawable/kyc"/>
 
 </RelativeLayout>

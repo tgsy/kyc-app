@@ -20,14 +20,8 @@ public class User {
     public String postal_code;
     public String date_of_birth;
     public String id;
-    public String address;
-    public String mobile_no;
-    public String gender;
-    public String nationality;
-    public String id_type;
-    public String marital_status;
-    public Date last_updated;
     public String email;
+    public String token_access;
 
     public User(String fullName, String postalCode, String identifNo, String dob) {
         full_name = fullName;

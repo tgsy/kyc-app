@@ -10,11 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.tessa.kyc.company.CompanyContent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -86,7 +83,7 @@ public class MainLoggedInActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add_company) {
-            Intent intent = new Intent(this, CompanyActivity.class);
+            Intent intent = new Intent(this, CompanySignUpActivity.class);
             startActivity(intent);
             return true;
         }
