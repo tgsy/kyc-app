@@ -17,8 +17,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainLoggedInActivity
         extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        CompanyFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
+        //CompanyFragment.OnListFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -136,8 +136,8 @@ public class MainLoggedInActivity
         mAuth.signOut();
     }
 
-    @Override
+    /*@Override
     public void onListFragmentInteraction(Company item) {
 
-    }
+    }*/
 }

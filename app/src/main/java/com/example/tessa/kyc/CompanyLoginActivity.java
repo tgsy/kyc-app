@@ -32,16 +32,21 @@ public class CompanyLoginActivity extends BaseActivity {
     EditText usernameEditText;
     EditText passwordEditText;
 
+    int companyID;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_login);
         logoFilename = getIntent().getStringExtra("Company Logo");
         companyName = getIntent().getStringExtra("Company Name");
-        companyLogoImageView = (ImageView) findViewById(R.id.company_logo);
+        companyLogoImageView = (ImageView) findViewById(R.id.CompanyLogin_logo);
         usernameEditText = (EditText) findViewById(R.id.CompanyLogin_email);
         passwordEditText = (EditText) findViewById(R.id.CompanyLogin_password);
         companyLoginButton = (Button) findViewById(R.id.CompanyLogin_button);
+
+        companyID = getIntent().getIntExtra("Company ID", 1000);
+
         Glide.with(this)
                 .load(mImageRef.child(logoFilename))
                 .into(companyLogoImageView);
@@ -49,6 +54,8 @@ public class CompanyLoginActivity extends BaseActivity {
 
     public void onClick(View view) {
         if (view.getId() == R.id.CompanyLogin_button) {
+
+            //new LoginOrgTask().execute();
 
             Intent intent = new Intent(this, MainLoggedInActivity.class);
             startActivity(intent);

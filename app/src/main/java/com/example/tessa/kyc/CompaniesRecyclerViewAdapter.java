@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.tessa.kyc.CompanyFragment.OnListFragmentInteractionListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,16 +34,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Company} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<CompaniesRecyclerViewAdapter.ViewHolder> { //FirebaseRecyclerAdapter {
 
     public static Context context;
     private static List<Company> mCompanies;
-    private static OnListFragmentInteractionListener mListener;
 
     private static HashMap<Integer, Boolean> appliedfor;
     List<Company> list;
@@ -116,11 +109,11 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+                Intent intent = new Intent(context, CompanyLoginActivity.class);
+                intent.putExtra("Company Name", holder.mItem.getName());
+                intent.putExtra("Company ID", holder.mItem.getId());
+                intent.putExtra("Company Logo", holder.mItem.getImage());
+                context.startActivity(intent);
             }
         });
     }
@@ -130,7 +123,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
         return mCompanies.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private final View mView;
         private final ImageView mImageView;
         private final TextView mIdView;
@@ -148,15 +141,6 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
         @Override
         public String toString() {
             return super.toString() + " " + mContentView.getText() + "'";
-        }
-
-        @Override
-        public void onClick(View v) {
-            Log.i("DED","recyclerviewonclick");
-            Intent intent = new Intent(context, CompanyLoginActivity.class);
-            intent.putExtra("Company Name", mItem.getName());
-            intent.putExtra("Company Logo", mItem.getImage());
-            context.getApplicationContext().startActivity(intent);
         }
     }
 

@@ -156,6 +156,7 @@ public class SignUpActivity extends BaseActivity implements
             intent.putExtra("E-mail", user.getEmail());
             intent.putExtra("ID", user.getUid());
             startActivity(intent);
+            finish();
         } else {
 //            findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
 //            findViewById(R.id.SignUp_email_password_fields).setVisibility(View.VISIBLE);

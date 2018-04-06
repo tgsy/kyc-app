@@ -30,7 +30,6 @@ public class User {
         date_of_birth = dob;
     }
 
-    // [START post_to_map]
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -40,8 +39,6 @@ public class User {
         result.put("Date of Birth", date_of_birth);
         return result;
     }
-    // [END post_to_map]
-
 }
 
 

@@ -17,40 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class CompanyFragment extends Fragment {
-    // Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // Customize parameters
-    private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+
     RecyclerView recyclerView;
     /*public static SharedPreferences sharedPref;
     public static SharedPreferences.Editor editor;*/
-    public static Context context;
-    public static CompaniesRecyclerViewAdapter adapter;
+    public Context context;
+    public CompaniesRecyclerViewAdapter adapter;
 
     @VisibleForTesting
     public ProgressDialog mProgressDialog;
 
-    public CompanyFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static CompanyFragment newInstance(int columnCount) {
-        CompanyFragment fragment = new CompanyFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-        context = getActivity();
+        context = getContext();
         /*sharedPref = context.getSharedPreferences(
                 getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
         editor = sharedPref.edit();*/
@@ -87,28 +67,6 @@ public class CompanyFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(Company item);
-    }
-
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(context);
@@ -124,16 +82,4 @@ public class CompanyFragment extends Fragment {
             mProgressDialog.dismiss();
         }
     }
-
-   /* @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }*/
 }

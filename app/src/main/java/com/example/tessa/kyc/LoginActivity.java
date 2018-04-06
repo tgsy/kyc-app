@@ -123,6 +123,7 @@ public class LoginActivity extends BaseActivity implements
             intent.putExtra("E-mail", user.getEmail());
             intent.putExtra("ID", user.getUid());
             startActivity(intent);
+            finish();
         } else {
             findViewById(R.id.Profile_Invalid).setVisibility(View.VISIBLE);
         }

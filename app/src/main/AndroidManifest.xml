@@ -3,7 +3,6 @@
     package="com.example.tessa.kyc"
     android:sharedUserId="@string/app_shared_userId">
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -46,11 +45,6 @@
             android:name=".SignUpActivity"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CameraActivity" />
-        <activity
-            android:name=".ImageUploadActivity"
-            android:label="@string/title_activity_image_upload"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainLoggedInActivity"
             android:label="@string/title_activity_main_logged_in"
@@ -60,24 +54,9 @@
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CompanySignUpActivity" />
-        <activity android:name=".ScanTokenActivity">
-
-            <!--
-            <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            -->
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.nfc.action.TECH_DISCOVERED"
-                android:resource="@xml/nfc_tech_filter" />
-        </activity>
-        <activity android:name=".CompanyLoginActivity"></activity>
+        <activity android:name=".ReadTokenActivity"/>
+        <activity android:name=".CompanyLoginActivity" />
+        <activity android:name=".WriteTokenActivity"/>
     </application>
 
 </manifest>

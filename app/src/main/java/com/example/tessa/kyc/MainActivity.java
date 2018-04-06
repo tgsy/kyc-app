@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity {
     public void moveOn() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
 

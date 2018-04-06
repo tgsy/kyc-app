@@ -1,9 +1,5 @@
 package com.example.tessa.kyc;
 
-/**
- * Created by tessa on 13/3/2018.
- */
-
 public class Company {
 
     int id;

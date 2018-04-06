@@ -35,10 +35,6 @@ import java.util.Iterator;
 
 import static com.example.tessa.kyc.BlocktraceCrypto.rsaEncrypt;
 
-/**
- * Created by tessa on 13/3/2018.
- */
-
 public class ReportFragment extends Fragment implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
@@ -85,7 +81,8 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                             public void onClick(DialogInterface dialog, int which) {
                                 ID = input.getText().toString();
                                 new reportTokenLost();
-
+                                mUserRef.child("users").child(userID).child("status").setValue(3);
+                                mAuth.getCurrentUser().delete();
                             }
                         });
                 alertDialog.setNegativeButton("CANCEL",
