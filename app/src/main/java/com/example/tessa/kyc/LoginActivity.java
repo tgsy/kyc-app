@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -27,8 +28,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -44,6 +48,7 @@ public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
     private FirebaseAuth mAuth;
+    private DatabaseReference usersRef;
   
     final String TAG = "DED";
     private EditText mEmailField;
@@ -55,9 +60,11 @@ public class LoginActivity extends BaseActivity implements
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference().child("users");
 
         mEmailField = (EditText) findViewById(R.id.Login_email);
         mPasswordField = (EditText) findViewById(R.id.Login_password);
+
     }
 
     @Override
@@ -119,14 +126,34 @@ public class LoginActivity extends BaseActivity implements
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            Intent intent = new Intent(this, MainLoggedInActivity.class);
-            intent.putExtra("E-mail", user.getEmail());
-            intent.putExtra("ID", user.getUid());
-            startActivity(intent);
-            finish();
+            showProgressDialog();
+            usersRef.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                       goToActivity(ProfileActivity.class);
+                    } else
+                        goToActivity(ReadTokenActivity.class);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         } else {
             findViewById(R.id.Profile_Invalid).setVisibility(View.VISIBLE);
         }
+    }
+
+    private void goToActivity(Class activityclass) {
+        Intent intent = new Intent(this, activityclass);
+        intent.putExtra("Origin", "Login");
+        intent.putExtra("E-mail", mAuth.getCurrentUser().getEmail());
+        intent.putExtra("ID", mAuth.getCurrentUser().getUid());
+        startActivity(intent);
+        hideProgressDialog();
+        finish();
     }
 
     private boolean validateForm() {

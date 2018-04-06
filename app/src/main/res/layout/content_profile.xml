@@ -42,7 +42,7 @@
             android:layout_below="@+id/Profile_ID_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:layout_alignParentStart="true"
             android:text="@string/verify_email"
             android:onClick="onClick"
             android:theme="@style/ThemeOverlay.MyDarkButton" />
@@ -191,7 +191,7 @@
         <ImageView
             android:id="@+id/Profile_ImageView"
             android:layout_below="@+id/Profile_TakePhoto_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"/>

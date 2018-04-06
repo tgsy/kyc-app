@@ -5,18 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -34,30 +30,19 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ProfileActivity extends BaseActivity implements
         View.OnClickListener {
@@ -68,6 +53,7 @@ public class ProfileActivity extends BaseActivity implements
     private DatabaseReference usersRef;
     private String userID;
     private Uri downloadUri;
+    private Uri filePath;
 
     private TextView emailView;
     private TextView statusView;
@@ -172,8 +158,6 @@ public class ProfileActivity extends BaseActivity implements
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
                         findViewById(R.id.verify_email_button).setEnabled(true);
 
                         if (task.isSuccessful()) {
@@ -186,10 +170,8 @@ public class ProfileActivity extends BaseActivity implements
                                     "Failed to send verification email.",
                                     Toast.LENGTH_SHORT).show();
                         }
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END send_email_verification]
     }
 
     @Override
@@ -200,7 +182,6 @@ public class ProfileActivity extends BaseActivity implements
         }
         if (i == R.id.Profile_TakePhoto_button) {
             dispatchTakePictureIntent();
-//            takePhotoButton.setText("Retake Photo");
         }
         if (i == R.id.Profile_Submit_button) {
             if (validateForm()
@@ -213,14 +194,11 @@ public class ProfileActivity extends BaseActivity implements
                         yyyyView.getText().toString();
                 writeNewUser(fn, pc, id, dob);
                 uploadImagetoFirebase();
-                new PostTask().execute(RegisterURL);
-                Log.i(TAG, "Posted Task YAY");
                 Toast.makeText(ProfileActivity.this,
                         "Registration Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, MainLoggedInActivity.class);
-                intent.putExtra("E-mail", mAuth.getCurrentUser().getEmail());
-                intent.putExtra("ID", mAuth.getCurrentUser().getUid());
                 startActivity(intent);
+                finish();
             } else {
                 validateForm();
             }
@@ -230,32 +208,72 @@ public class ProfileActivity extends BaseActivity implements
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private void dispatchTakePictureIntent() {
+        Log.i("WHAT", "dispatchtakepic()");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+                Log.i("WHAT", "created image file");
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                Log.i("WHAT", "io exception");
+                ex.printStackTrace();
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Log.i("WHAT", "continues");
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                Log.i("WHAT", "got Uri: "+photoURI);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Log.i("WHAT", "took pictureintent: ");
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                Log.i("WHAT", "startedactivityforresult ");
+            }
         }
+    }
+
+    String mCurrentPhotoPath;
+    Uri file;
+
+    private File createImageFile() throws IOException {
+        Log.i("WHAT", "createimagefile()");
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        Log.i("WHAT", "currentphotopath="+mCurrentPhotoPath);
+        return image;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i("WHAT", "onactivityresult()");
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
-            mImageView.setImageBitmap(imageBitmap);
+            mImageView.setImageURI(Uri.fromFile(new File(mCurrentPhotoPath)));
             mImageView.setVisibility(View.VISIBLE);
         }
+
     }
 
-    private void uploadImagetoFirebase(){
+    private void uploadImagetoFirebase() {
 
-        // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-        Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
+        file = Uri.fromFile(new File(mCurrentPhotoPath));
 
-        // CALL THIS METHOD TO GET THE ACTUAL PATH
-        File finalFile = new File(getRealPathFromURI(tempUri));
-
-        Uri file = Uri.fromFile(finalFile);
-        StorageReference identifImage = storageRef.child("images/"+userID+".jpg");
+        StorageReference identifImage = storageRef.child("images/" + userID + ".jpg");
 
         identifImage.putFile(file)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -264,7 +282,6 @@ public class ProfileActivity extends BaseActivity implements
                         //Get a URL to the uploaded content
                         downloadUri = taskSnapshot.getDownloadUrl();
                         usersRef.child("image").setValue(downloadUri.toString());
-                        //mDatabase.child(userID).push().setValue(downloadUri.toString());
                         Toast.makeText(getApplicationContext(), "Image Upload Successful",
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -274,31 +291,16 @@ public class ProfileActivity extends BaseActivity implements
                     public void onFailure(@NonNull Exception exception) {
                         // Handle unsuccessful uploads
                         Toast.makeText(getApplicationContext(), "Image Upload failed",
-                               Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
     }
 
     private boolean validateImageUpload() {
         boolean valid = true;
 
         if (mImageView.getVisibility()==View.GONE) {
-            pleaseUpload.setText("Please upload an image of you holding " +
-                    "your identification documents for verification");
+            pleaseUpload.setText(getResources().getString(R.string.validate_image_upload));
             pleaseUpload.setVisibility(View.VISIBLE);
             valid = false;
         } else
@@ -327,7 +329,7 @@ public class ProfileActivity extends BaseActivity implements
 
         int count = 1000;
         while (count<=COMPANY_COUNT) {
-            usersRef.child("company").child(String.valueOf(count)).setValue("false");
+            usersRef.child("company").child(String.valueOf(count)).setValue(false);
             count++;
         }
 
@@ -337,73 +339,8 @@ public class ProfileActivity extends BaseActivity implements
         usersRef.child("email").setValue(emailView.getText());
     }
 
-    class PostTask extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            //URL to call
-            String urlString = params[0];
-
-            HttpURLConnection urlConnection = null;
-
-            try {
-                URL url = new URL(urlString);
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("name",nameView.getText().toString());
-                jsonObject.put("postal_code", postalCodeView.getText().toString());
-                jsonObject.put("id_number",identifNoView.getText().toString());
-                jsonObject.put("dob",ddView.getText().toString()
-                        +"/"+mmView.getText().toString()
-                        +"/"+yyyyView.getText().toString());
-
-                Log.e(TAG,jsonObject.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                //set the request method to Post
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setRequestProperty("Content-Type","application/json");
-                urlConnection.setDoInput(true);
-                urlConnection.setDoOutput(true);
-
-
-                //output the stream to the server
-                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.
-                        getOutputStream());
-                wr.write(jsonObject.toString());
-                wr.flush();
-
-                int responseCode = urlConnection.getResponseCode();
-
-
-                if (responseCode == HttpsURLConnection.HTTP_OK){
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder sb = new StringBuilder("");
-                    String line = "";
-
-                    while ((line = in.readLine())!=null){
-                        sb.append(line);
-                    }
-                    in.close();
-                    Log.i(TAG,sb.toString());
-                    return sb.toString();
-                }
-                else {
-                    return new String("false : " + responseCode);
-                }
-                // urlConnection.connect();
-            }catch (Exception ex){
-                return new String("Exception: " + ex.getMessage());
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(ProfileActivity.this, result, Toast.LENGTH_LONG).show();
-            try {
-                token = new JSONObject(result);
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
-        }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

@@ -1,5 +1,7 @@
 package com.example.tessa.kyc;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,7 +20,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainLoggedInActivity
         extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-        //CompanyFragment.OnListFragmentInteractionListener {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -70,18 +71,35 @@ public class MainLoggedInActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Exiting blocktrace")
+                    .setMessage("Are you sure you want to log out and exit blocktrace?")
+                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            mAuth.signOut();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            android.os.Process.killProcess(android.os.Process.myPid());
+                            System.exit(1);
+                        }
+
+                    })
+                    .setNegativeButton("NO", null)
+                    .show();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.add_company) {
             Intent intent = new Intent(this, CompanySignUpActivity.class);
             startActivity(intent);
@@ -90,7 +108,6 @@ public class MainLoggedInActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -100,6 +117,7 @@ public class MainLoggedInActivity
             signOut();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
 
         } else {
             switch (id) {
@@ -136,8 +154,5 @@ public class MainLoggedInActivity
         mAuth.signOut();
     }
 
-    /*@Override
-    public void onListFragmentInteraction(Company item) {
 
-    }*/
 }

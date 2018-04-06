@@ -151,7 +151,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child(cid).getValue().toString().equalsIgnoreCase("true")) {
+                        if (dataSnapshot.child(cid).getValue().equals(true)) {
                             appliedfor.put(Integer.valueOf(cid), true);
                             for (Company c: list) {
                                 if (String.valueOf(c.getId()).equalsIgnoreCase(cid) && !mCompanies.contains(c)) {

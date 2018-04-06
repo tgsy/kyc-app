@@ -5,20 +5,9 @@
     <string name="preference_companies_key">com.example.tessa.kyc.USER_SIGNED_COMPANIES</string>
     <string name="preference_getting_started">com.example.tessa.kyc.USER_START</string>
 
-    <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This Username has been taken</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
 
-    <!-- Firebase-->
     <string name="loading">Loading…</string>
 
     <string name="custom_token">Custom Token</string>
@@ -35,35 +24,39 @@
     <string name="create_account">Create Account</string>
     <string name="sign_out">Sign Out</string>
     <string name="verify_email">Verify Email</string>
-    <string name="emailpassword_title_text">Log In or Register</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="title_activity_sign_up">Sign Up</string>
+    <string name="validate_image_upload">Please upload an image of yourself holding your identification documents for verification purposes</string>
 
-    <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
-    <string name="auth_failed">authentication failed</string>
-    <string name="title_activity_image_upload">ImageUploadActivity</string>
     <string name="title_activity_main_logged_in">blocktrace</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
     <string name="title_activity_profile"></string>
+
+    <string name="company_login">Login to %1$s</string>
 
     <string name="app_shared_userId">com.example.tessa</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="nfc_write_error">Error Writing to Token</string>
-    <string name="nfc_write_success">Successfully written to Token</string>
-    <string name="nfc_write_progress">Writing to Token..</string>
-    <string name="nfc_tag_detected">Token Detected</string>
-    <string name="nfc_read_tag">Read from NFC Tag</string>
-    <string name="nfc_write_tag">Write to NFC Tag</string>
-    <string name="nfc_tap_tag">Please tap your Blocktrace token to your device</string>
-    <string name="hint_nfc">Message</string>
+    <string name="scan_nfc_token">Please scan your nfc token</string>
+
+    <string name="report_token_loss">Report loss of token</string>
+
+    <string name="report_loss_read">PLEASE READ CAREFULLY BEFORE PROCEEDING:\n\n</string>
+
+    <string name="report_token_text">
+        Replacement fee of S$20.00 applies.\nFor security reasons, you will have to re-register for KYC.\n\nIf your token is faulty, DO NOT CONTINUE.\n\nCall the blocktrace service hotline for a replacement and the replacement fee will be waived.
+    </string>
+
+    <string name="token_loss_prompt">Please enter your NRIC/FIN number for verification purposes</string>
+
+    <string name="agree_and_continue">Continue</string>
+
+    <string name="content_attribute">Content_Attribute</string>
+
 
 
 </resources>

@@ -57,12 +57,14 @@ public class CompanyLoginActivity extends BaseActivity {
 
             //new LoginOrgTask().execute();
 
-            Intent intent = new Intent(this, MainLoggedInActivity.class);
+            Intent intent = new Intent(this, ReadTokenActivity.class);
+            intent.putExtra("Origin", "Company Login");
+            intent.putExtra("Company Name", companyName);
+            intent.putExtra("Username", usernameEditText.getText().toString());
+            intent.putExtra("Password", passwordEditText.getText().toString());
             startActivity(intent);
 
-            Toast.makeText(this,
-                    "Login to "+companyName+" Successful",
-                    Toast.LENGTH_SHORT).show();
+
         }
     }
 

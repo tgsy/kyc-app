@@ -35,15 +35,12 @@ import java.util.Iterator;
 
 import static com.example.tessa.kyc.BlocktraceCrypto.rsaEncrypt;
 
-public class ReportFragment extends Fragment implements View.OnClickListener {
+public class ReportFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mUserRef;
     private String userID;
-    Button reportLoss;
-    Button reportFound;
-
-    String ID;
+    private String ID;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -54,35 +51,29 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
         mUserRef = FirebaseDatabase.getInstance().getReference();
-        reportLoss = (Button) v.findViewById(R.id.report_loss_button);
-        reportFound = (Button) v.findViewById(R.id.report_found_button);
-        reportLoss.setOnClickListener(this);
-        reportFound.setOnClickListener(this);
-        return v;
-    }
-
-    @Override
-    public void onClick(View v) {
-        Intent intent = null;
-        switch (v.getId()) {
-            case R.id.report_loss_button:
+        Button reportLoss = (Button) v.findViewById(R.id.report_loss_button);
+        reportLoss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                 alertDialog.setTitle("Report Loss of Token");
-                alertDialog.setMessage("For security reasons, you will have to re-register for KYC.\nFor identification, please provide your ID");
-                final EditText input = new EditText(getContext());
+                alertDialog.setMessage(getResources().getString(R.string.token_loss_prompt));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
+                lp.setMargins(16, 16,16, 16);
+                final EditText input = new EditText(getContext());
                 input.setLayoutParams(lp);
                 alertDialog.setView(input);
                 alertDialog.setIcon(R.drawable.ic_report_black_24dp);
-                alertDialog.setPositiveButton("OK",
+                alertDialog.setPositiveButton("REPORT",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 ID = input.getText().toString();
-                                new reportTokenLost();
-                                mUserRef.child("users").child(userID).child("status").setValue(3);
+                                new reportTokenLost().execute();
                                 mAuth.getCurrentUser().delete();
+                                getActivity().finish();
+                                System.exit(0);
                             }
                         });
                 alertDialog.setNegativeButton("CANCEL",
@@ -92,18 +83,10 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                             }
                         });
                 alertDialog.show();
-                break;
+            }
+        });
 
-            case R.id.report_found_button:
-                intent = new Intent(getActivity(), MainLoggedInActivity.class);
-                intent.putExtra("Origin", "Report");
-                startActivity(intent);
-                Toast.makeText(getActivity(),
-                        "Submission Successful",
-                        Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-                break;
-        }
+        return v;
     }
 
     class reportTokenLost extends AsyncTask<String,Void,String> {
@@ -132,6 +115,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(String result){
+            mUserRef.child("users").child(userID).child("status").setValue(3);
             Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
             Toast.makeText(getContext(), "Submission Successful", Toast.LENGTH_SHORT).show();
         }

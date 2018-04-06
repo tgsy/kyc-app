@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/activity_vertical_margin"
     tools:context=".CompanyLoginActivity">
 
-    <ImageView
-        android:id="@+id/companyLogin_logo"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/company_login"
         android:layout_margin="16dp"
+        android:textAllCaps="true" />
+
+    <ImageView
+        android:id="@+id/CompanyLogin_logo"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/content_attribute"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

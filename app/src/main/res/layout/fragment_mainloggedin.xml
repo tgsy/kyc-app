@@ -14,6 +14,7 @@
         android:textAlignment="center"
         android:textSize="16sp"
         android:textAllCaps="true"
+        android:textStyle="bold"
         android:text="Welcome!\n\n You are currently logged in as" />
 
     <TextView

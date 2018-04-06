@@ -50,9 +50,6 @@ public class CompanySignUpActivity extends BaseActivity {
 
     private static final File FILE = new File("/storage/emulated/0/blocktrace/banks.json");
 
-/*    SharedPreferences sharedPref;
-    SharedPreferences.Editor editor;*/
-
     @Override
     public void onCreate(Bundle savedInstanceState) { //was protected
         super.onCreate(savedInstanceState);
@@ -72,9 +69,6 @@ public class CompanySignUpActivity extends BaseActivity {
         companyLogo = (ImageView) findViewById(R.id.company_logo);
 
         mImageRef = FirebaseStorage.getInstance().getReference().child("companylogos");
-        /*sharedPref = this.getSharedPreferences(
-                getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
-        editor = sharedPref.edit();*/
 
         String jsonString = parseJson(FILE);
         List<Company> list = Arrays.asList(new Gson().
@@ -85,7 +79,6 @@ public class CompanySignUpActivity extends BaseActivity {
         for (Company c:list) {
             validCompanies.put(c.getId(), c.getName());
             companyImages.put(c.getId(), c.getImage());
-            //editor.putBoolean(Integer.toString(c.getId()), false);
         }
     }
 
@@ -96,12 +89,11 @@ public class CompanySignUpActivity extends BaseActivity {
                 break;
             case R.id.Company_link_button:
                 Intent intent = new Intent(this, ReadTokenActivity.class);
-                intent.putExtra("Company", validCompanies.get(companyID));
-                intent.putExtra("Origin", "Company");
-                intent.putExtra("Token", getToken().toString());
+                intent.putExtra("Company Name", validCompanies.get(companyID));
+                intent.putExtra("Origin", "Company Registration");
+//                intent.putExtra("Token", getToken().toString());
                 intent.putExtra("Username", usernameEditText.getText().toString());
                 intent.putExtra("Password", passwordEditText.getText().toString());
-                intent.putExtra("Company ID", companyID);
                 startActivity(intent);
         }
     }
