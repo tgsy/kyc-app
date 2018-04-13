@@ -73,10 +73,6 @@ public class ProfileActivity extends BaseActivity implements
     private String imageUrl;
     private String imageKey;
 
-    final String RegisterURL = "https://kyc-project.herokuapp.com/register_kyc";
-
-    JSONObject token;
-    JSONObject tokenjson;
 
     final String TAG = "DED";
 
@@ -107,8 +103,6 @@ public class ProfileActivity extends BaseActivity implements
         takePhotoButton = (ImageButton) findViewById(R.id.Profile_TakePhoto_button);
         verifyEmailButton = (Button) findViewById(R.id.verify_email_button);
 
-        tokenjson = new JSONObject();
-        token = new JSONObject();
 
         Intent intent = getIntent();
         emailView.setText(intent.getStringExtra("E-mail"));
