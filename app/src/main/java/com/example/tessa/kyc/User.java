@@ -21,7 +21,6 @@ public class User {
     public String date_of_birth;
     public String id;
     public String email;
-    public String token_access;
 
     public User(String fullName, String postalCode, String identifNo, String dob) {
         full_name = fullName;
