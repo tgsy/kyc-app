@@ -27,6 +27,7 @@ public class WriteTokenActivity extends BaseActivity {
 
     NfcAdapter nfcAdapter;
     EditText txtTagContent;
+    String tokenStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class WriteTokenActivity extends BaseActivity {
         setContentView(R.layout.activity_write_token);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        Intent intent = getIntent();
+        tokenStr = intent.getStringExtra("KEY");
     }
 
     /*
@@ -42,24 +45,27 @@ public class WriteTokenActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent){
         super.onNewIntent(intent);
+        String token = "";
 
         if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
             Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
 
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            JSONObject token = new JSONObject();
+
             try{
-                token.put("block_id","937efdbccc5295d88d02cad8b2eb67185273b985b7d78f95fa6ba04808117a28");
+                token = new updateTokenTask().execute().get();
+
+              /*  token.put("block_id","937efdbccc5295d88d02cad8b2eb67185273b985b7d78f95fa6ba04808117a28");
                 token.put("merkle_raw","44b93080f0d701ec235ba97b0a35fd0e8ad4fc2c570816495b636214beb696b5");
                 token.put("private_key", "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCsOx8bSB/7yq8D\nDUyRSINOFRFnHssBpv4KW7D/NTactulPUBJmDMsOFu1T/3bkoQUtmI5hnraox2ov\ntauhpPUpSqAGDgoHH9H5SLULQtlmhVuNWiBVB2abgp41nQTHCfrhMmBKRN/hhV1F\n3mqZUTXxqhkFLjWL7r0siCxfMMILef9Tu0+kER10zkqy5ra8NqUd0GmFxnObE3DY\n1tqZ6yHwpvgqR0PfwmPEfwxA/cL6WPVgIXKF05E3Ml6UMUAyv3skdeVdgdMBL4+E\nekgowqjnKcJsyueVLxVxapaXA+fR6BjSZDjNl1NLiqH5NlOYpIhwjFFR7ln7rquy\nRGAIFbvXAgMBAAECggEAFWdZg8nwU5nKKx5tfAafbsY2ffK5NtDadE4Vznl9+nbO\nwtEIIE+JsowN3Wj7jQknvBVf6GjReWMi4p/4nuOBpiqEfYwkGeON9CVhfm9F1jRP\nft8K8pYzXbMbVz1WuSeX2oGorsIlcoDg6QxtgfUyN4C0kEzAUc4PC2g233OPQd6o\nnedZc/TOE5vGt1O5EPPTpCF/CBXMqaQI1dgtv08b2zOh8daRgKtHfQxYFetjT/lN\nRnVike6VxKWw5ioyOQD7XXZyRui+0YXDpgT+w3XTwKnQAVCk3/193GXPRo/61zfm\nxD5lEPua4YWJF9dgsnU5w9AuNsIkrCvAJcsL/Am19QKBgQDFNbF35fnXZ1Ad7Kdc\nS4ePmfqhW5+Aoc74Fyrkic3JQyV+2RmQgiTt1PMEAXZsGOrJyvSPI4p24hAjbK5b\nJgQer229lILC67Wc6nio81podh7YkG2q75W2czqXwJxJoJ9Ya4TNK/al6TnFyfZL\nc5DnFESTwEPQyzIwCXuV8R4ZCwKBgQDfkyPvnxcxq+6I9kMc3+UE02bKHGPfbLpH\n0gAWM+ullS1zbKplvHwHDFQYJQQyXFOuRRS3RkZIi9/QMeWMY4aPILB3tMjh1rAV\nl60DWmp2BKV99y/bxLiil2oTqlgsCkDg1dreZPVAAvP5Y5XzX48OymektUCAWNkC\ndIWoOAMf5QKBgFUXo+muK62MAH/I+zXRyT5nHEO/ewVPzDQ0GufdphOvi2A+YM9/\nuFt+xRT3ZJej8Lr9faS9myNMy9XdMSZXMvPikiF5ESr19bktWr7bsijcvtaHCyr0\nkc7VzXRpQYZrbhYC3pyA2b4g8jKrwEAyL1Xl4uk1zo0rAA7GKLM8BNadAoGAGA3R\noPdB3JM977hnEhU4o6NG/Nm/GQuuowmB/uGJKeB56mA3mQiFY5C8/3gEEpMCYc6G\n4w0JhMafxtuHcepHUODYe5iUwE+D1F7kO2cf6yCm2X2dxYxNvRiDTihWoi5cOpRn\nnuPHyyJGM3+2Y1/VmWbHbd4eWXC1sGDu/GFCXM0CgYBmOSKC7LLSJT5mizpBnzmS\nWfyeTTnmKY2aiYAG6nX7gyA/gvwYFZM+PQSQPvtbGzJvEqNlLtxN2zjGnD8bcC7N\nMH0yEjEAnWpa/qJ1qd0QfiF/Z3OuI388o8ajxD17NX4CsPXv27VxXhisJwnTUJa+\nz/3l0pxOVOU2/uoR0ksrrQ==\n-----END PRIVATE KEY-----");
                 token.put("AES_key","[215, 94, 25, 236, 7, 4, 121, 162, 84, 219, 130, 14, 80, 150, 82, 108, 68, 9, 61, 46, 87, 20, 178, 216, 152, 217, 193, 87, 42, 63, 113, 143]");
-                Log.i("Norman",token.toString());
+                Log.i("Norman",token.toString()); */
 
             }catch (Exception ex){
                 ex.printStackTrace();
             }
 
-            NdefMessage ndefMessage = createNdefMessage(txtTagContent.getText()+""); //currently using the edittext to write into the token (for debugging)
+            NdefMessage ndefMessage = createNdefMessage(token); //currently using the edittext to write into the token (for debugging)
             writeNdefMessage(tag,ndefMessage);
         }
     }
@@ -176,29 +182,29 @@ public class WriteTokenActivity extends BaseActivity {
         return ndefMessage;
     }
 
-    public void onClick(View view) {
+   /* public void onClick(View view) {
         //if successful
         new updateTokenTask().execute();
 
         //else scan again
         //Toast.makeText(WriteTokenActivity.this, "Token Update was unsuccessful. Please scan your token again", Toast.LENGTH_SHORT).show();
         //finish();
-    }
+    }*/
 
     class updateTokenTask extends AsyncTask<String,Void,String> {
-        //JSONObject token;
-
+        JSONObject token;
         @Override
         protected String doInBackground(String... params){
             try {
+
                 //get the public key from kyc backend for encryption of block_id and AES_key (JSONObject) to be sent
                 String str_public_key = Http_Get("https://kyc-project.herokuapp.com/getkey");
 
                 byte[] pubKeyByte = BlocktraceCrypto.pemToBytes(str_public_key);
 
                 JSONObject update_object = new JSONObject();
-                JSONObject token = getToken();
-                update_object.put("AES_key",token.get("AES_key"));
+                token = getToken(tokenStr);
+                //update_object.put("AES_key",token.get("AES_key"));
                 update_object.put("block_id",token.get("block_id"));
 
                 JSONObject encrypted_info = encrypt_json(update_object, pubKeyByte);
@@ -207,7 +213,12 @@ public class WriteTokenActivity extends BaseActivity {
                 JSONObject new_AES_key_object = new JSONObject(Http_Post("https://kyc-project.herokuapp.com/update_token", encrypted_info));
                 String new_AES_key = new_AES_key_object.get("AES_key").toString();
 
-                return new_AES_key;
+                token.remove("block_id");
+                token.put("block_id",new_AES_key);
+                token.put("hi","bye"); // for debugging
+
+                return token.toString();
+
             } catch (Exception ex){
                 return "Exception " + ex.getMessage();
             }
@@ -216,20 +227,23 @@ public class WriteTokenActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result){
             try {
-                JSONObject token = getToken();
+                //JSONObject token = getToken();
                 //remove the original AES_key from token and update it with new AES_key
-                token.remove("AES_key");
-                token.put("AES_key",result);
-                Log.i("Norman","newToken");
-                Log.i("Norman",token.toString());
+                //token.remove("AES_key");
+                //token.put("AES_key",result);
 
-                String message = saveToken(token);
+
+                Log.i("Norman","newToken");
+                Log.i("Norman",result);
+
+                //String message = saveToken(token);
 
                 Intent intent = new Intent(getApplicationContext(), MainLoggedInActivity.class);
                 startActivity(intent);
 
                 Toast.makeText(WriteTokenActivity.this, "Token update successful", Toast.LENGTH_SHORT).show();
                 finish();
+
 
                 //Toast.makeText(WriteTokenActivity.this, result, Toast.LENGTH_LONG).show();
             } catch (Exception ex){
@@ -238,3 +252,4 @@ public class WriteTokenActivity extends BaseActivity {
         }
     }
 }
+
