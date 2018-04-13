@@ -3,6 +3,7 @@ package com.example.tessa.kyc;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,10 +13,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
 
 public class MainLoggedInActivity
         extends AppCompatActivity
@@ -24,6 +34,8 @@ public class MainLoggedInActivity
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String userID;
+    private DatabaseReference statusRef;
+    private int status;
 
     Fragment fragment;
     Class fragmentClass;
@@ -36,6 +48,22 @@ public class MainLoggedInActivity
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         userID = currentUser.getUid();
+        statusRef = FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(userID)
+                .child("status");
+
+        statusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                status = Integer.valueOf(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         fragmentClass = MainLoggedInFragment.class;
 
@@ -126,10 +154,18 @@ public class MainLoggedInActivity
                     break;
 
                 case R.id.nav_companysignup:
+                    if (status!=2) {
+                        Toast.makeText(getApplicationContext(), "Please wait for your token to be delivered to you to use this feature", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     fragmentClass = CompanyFragment.class;
                     break;
 
                 case R.id.nav_report:
+                    if (status!=2) {
+                        Toast.makeText(getApplicationContext(), "Please wait for your token to be delivered to you to use this feature", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     fragmentClass = ReportFragment.class;
                     break;
             }

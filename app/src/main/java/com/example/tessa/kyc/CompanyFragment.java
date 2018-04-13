@@ -18,9 +18,6 @@ import android.view.ViewGroup;
 
 public class CompanyFragment extends Fragment {
 
-    RecyclerView recyclerView;
-    /*public static SharedPreferences sharedPref;
-    public static SharedPreferences.Editor editor;*/
     public Context context;
     public CompaniesRecyclerViewAdapter adapter;
 
@@ -31,9 +28,6 @@ public class CompanyFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getContext();
-        /*sharedPref = context.getSharedPreferences(
-                getString(R.string.preference_companies_key), Context.MODE_PRIVATE);
-        editor = sharedPref.edit();*/
     }
 
     @Override
@@ -44,7 +38,7 @@ public class CompanyFragment extends Fragment {
 
         adapter = new CompaniesRecyclerViewAdapter(this.getContext());
 
-        recyclerView = view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.list);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

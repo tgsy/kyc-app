@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -76,9 +77,9 @@ public class ReadTokenActivity extends BaseActivity {
     public void onClick(View view) {
         if (origin.equalsIgnoreCase("Company Login")) {
             //if token gives correct keys
-            //new LoginOrgTask().execute();
+            new LoginOrgTask().execute();
 
-            Intent intent = new Intent(this, MainLoggedInActivity.class);
+            Intent intent = new Intent(this, WriteTokenActivity.class);
             startActivity(intent);
 
             Toast.makeText(this,
@@ -90,34 +91,10 @@ public class ReadTokenActivity extends BaseActivity {
 
         else if (origin.equals("Company Registration")) {
             //if token gives correct keys
-            //new RegisterOrgTask().execute();
+            new RegisterOrgTask().execute();
 
-            Intent intent = new Intent(this, MainLoggedInActivity.class);
-            startActivity(intent);
 
-            Toast.makeText(this,
-                    companyName+" Registration Successful",
-                    Toast.LENGTH_SHORT).show();
-            finish();
             //else not successful
-        }
-
-        else {
-            //check if tag gives correct keys
-            Intent intent = new Intent(this, MainLoggedInActivity.class);
-            intent.putExtra("E-mail", getIntent().getStringExtra("E-mail"));
-            intent.putExtra("ID", getIntent().getStringExtra("ID"));
-            startActivity(intent);
-
-            Toast.makeText(this,
-                    "Login to blocktrace Successful",
-                    Toast.LENGTH_SHORT).show();
-            finish();
-            //else logout
-            /*mAuth.signOut();
-            Intent intent = new Intent (this, LoginActivity.class);
-            startActivity(intent);
-            finish();*/
         }
     }
 
@@ -141,8 +118,8 @@ public class ReadTokenActivity extends BaseActivity {
                 register_org_info.put("password", BlocktraceCrypto.hash256(password));
 
                 JSONObject token = getToken();
-                register_org_info.put("block_id", "blockid");//token.get("block_id"));
-                register_org_info.put("AES_key", "aes key");//token.get("AES_key"));
+                register_org_info.put("block_id", token.get("block_id"));
+                register_org_info.put("AES_key", token.get("AES_key"));
 
                 JSONObject encrypted_info = encrypt_json(register_org_info,publicKeyByte);
 
@@ -159,7 +136,7 @@ public class ReadTokenActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
+            /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
             alertDialog.setTitle("Update Token");
             alertDialog.setMessage("Please update your token");
             final EditText input = new EditText(ReadTokenActivity.this);
@@ -172,12 +149,26 @@ public class ReadTokenActivity extends BaseActivity {
             alertDialog.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent (getParent(), WriteTokenActivity.class);
+                            Intent intent = new Intent (getBaseContext(), WriteTokenActivity.class);
                             startActivity(intent);
                         }
                     });
-            alertDialog.show();
-            mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
+            alertDialog.show();*/
+            try {
+                Log.i("NORMAN","result:"+result);
+                token = new JSONObject(result);
+                mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
+                Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
+                intent.putExtra("KEY", token.toString());
+                startActivity(intent);
+                Toast.makeText(getApplicationContext(),
+                        companyName+" Registration Successful",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -230,30 +221,36 @@ public class ReadTokenActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
-            alertDialog.setTitle("Update Token");
-            alertDialog.setMessage("Please update your token");
-            final EditText input = new EditText(ReadTokenActivity.this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            input.setLayoutParams(lp);
-            alertDialog.setView(input);
-            alertDialog.setIcon(R.drawable.ic_verified_user_black_24dp);
-            alertDialog.setPositiveButton("OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent (getParent(), WriteTokenActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-            alertDialog.show();
+            try {
+                token = new JSONObject(result);
+                Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
+                alertDialog.setTitle("Update Token");
+                alertDialog.setMessage("Please update your token");
+                final EditText input = new EditText(ReadTokenActivity.this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                alertDialog.setView(input);
+                alertDialog.setIcon(R.drawable.ic_verified_user_black_24dp);
+                alertDialog.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent (getParent(), WriteTokenActivity.class);
+                                intent.putExtra("KEY", token.toString());
+                                startActivity(intent);
+                            }
+                        });
+                alertDialog.show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
-//    /*
+//   /*
 //       This method is to detect the NFC Tag and perform reading token function
 //   */
 //    @Override

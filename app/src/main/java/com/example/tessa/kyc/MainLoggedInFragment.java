@@ -121,17 +121,19 @@ public class MainLoggedInFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.i("DATASNAPSHOT", "getvalue: "+dataSnapshot.getValue());
-                if (dataSnapshot.equals(2)) {
+                if ((long) dataSnapshot.getValue()==2) {
                     PackageManager packageManager = getActivity().getPackageManager();
                     try {
                         appInfo = packageManager.getApplicationInfo(packageName,PackageManager.GET_META_DATA);
-
+                        fileFullPath = appInfo.dataDir + filePath;
+                        Log.i("FILE",fileFullPath);
+                        JSONObject token = getToken(fileFullPath);
+                        Log.i("FILE","token is "+token.toString());
+                        String message = saveToken(token);
+                        Log.i("FILE", "message is "+message);
                     } catch (Exception ex){
                         ex.printStackTrace();
                     }
-                    fileFullPath = appInfo.dataDir + filePath;
-                    JSONObject token = getToken(fileFullPath);
-                    String message = saveToken(token);
                 }
                 tokenStatusView.setText(status.get(Integer.valueOf(dataSnapshot.getValue().toString())));
             }

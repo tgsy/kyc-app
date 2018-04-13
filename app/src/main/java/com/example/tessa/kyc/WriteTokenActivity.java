@@ -33,159 +33,152 @@ public class WriteTokenActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_token);
 
-
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        txtTagContent = (EditText) findViewById(R.id.writeToken_content); //for writing the info to the tag (for debugging)
     }
-//
-//    /*
-//       If token is detected, write the token
-//    */
-//    @Override
-//    protected void onNewIntent(Intent intent){
-//        super.onNewIntent(intent);
-//
-//        if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
-//            Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
-//
-//            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-//            JSONObject token = new JSONObject();
-//            try{
-//                token.put("block_id","937efdbccc5295d88d02cad8b2eb67185273b985b7d78f95fa6ba04808117a28");
-//                token.put("merkle_raw","44b93080f0d701ec235ba97b0a35fd0e8ad4fc2c570816495b636214beb696b5");
-//                token.put("private_key", "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCsOx8bSB/7yq8D\nDUyRSINOFRFnHssBpv4KW7D/NTactulPUBJmDMsOFu1T/3bkoQUtmI5hnraox2ov\ntauhpPUpSqAGDgoHH9H5SLULQtlmhVuNWiBVB2abgp41nQTHCfrhMmBKRN/hhV1F\n3mqZUTXxqhkFLjWL7r0siCxfMMILef9Tu0+kER10zkqy5ra8NqUd0GmFxnObE3DY\n1tqZ6yHwpvgqR0PfwmPEfwxA/cL6WPVgIXKF05E3Ml6UMUAyv3skdeVdgdMBL4+E\nekgowqjnKcJsyueVLxVxapaXA+fR6BjSZDjNl1NLiqH5NlOYpIhwjFFR7ln7rquy\nRGAIFbvXAgMBAAECggEAFWdZg8nwU5nKKx5tfAafbsY2ffK5NtDadE4Vznl9+nbO\nwtEIIE+JsowN3Wj7jQknvBVf6GjReWMi4p/4nuOBpiqEfYwkGeON9CVhfm9F1jRP\nft8K8pYzXbMbVz1WuSeX2oGorsIlcoDg6QxtgfUyN4C0kEzAUc4PC2g233OPQd6o\nnedZc/TOE5vGt1O5EPPTpCF/CBXMqaQI1dgtv08b2zOh8daRgKtHfQxYFetjT/lN\nRnVike6VxKWw5ioyOQD7XXZyRui+0YXDpgT+w3XTwKnQAVCk3/193GXPRo/61zfm\nxD5lEPua4YWJF9dgsnU5w9AuNsIkrCvAJcsL/Am19QKBgQDFNbF35fnXZ1Ad7Kdc\nS4ePmfqhW5+Aoc74Fyrkic3JQyV+2RmQgiTt1PMEAXZsGOrJyvSPI4p24hAjbK5b\nJgQer229lILC67Wc6nio81podh7YkG2q75W2czqXwJxJoJ9Ya4TNK/al6TnFyfZL\nc5DnFESTwEPQyzIwCXuV8R4ZCwKBgQDfkyPvnxcxq+6I9kMc3+UE02bKHGPfbLpH\n0gAWM+ullS1zbKplvHwHDFQYJQQyXFOuRRS3RkZIi9/QMeWMY4aPILB3tMjh1rAV\nl60DWmp2BKV99y/bxLiil2oTqlgsCkDg1dreZPVAAvP5Y5XzX48OymektUCAWNkC\ndIWoOAMf5QKBgFUXo+muK62MAH/I+zXRyT5nHEO/ewVPzDQ0GufdphOvi2A+YM9/\nuFt+xRT3ZJej8Lr9faS9myNMy9XdMSZXMvPikiF5ESr19bktWr7bsijcvtaHCyr0\nkc7VzXRpQYZrbhYC3pyA2b4g8jKrwEAyL1Xl4uk1zo0rAA7GKLM8BNadAoGAGA3R\noPdB3JM977hnEhU4o6NG/Nm/GQuuowmB/uGJKeB56mA3mQiFY5C8/3gEEpMCYc6G\n4w0JhMafxtuHcepHUODYe5iUwE+D1F7kO2cf6yCm2X2dxYxNvRiDTihWoi5cOpRn\nnuPHyyJGM3+2Y1/VmWbHbd4eWXC1sGDu/GFCXM0CgYBmOSKC7LLSJT5mizpBnzmS\nWfyeTTnmKY2aiYAG6nX7gyA/gvwYFZM+PQSQPvtbGzJvEqNlLtxN2zjGnD8bcC7N\nMH0yEjEAnWpa/qJ1qd0QfiF/Z3OuI388o8ajxD17NX4CsPXv27VxXhisJwnTUJa+\nz/3l0pxOVOU2/uoR0ksrrQ==\n-----END PRIVATE KEY-----");
-//                token.put("AES_key","[215, 94, 25, 236, 7, 4, 121, 162, 84, 219, 130, 14, 80, 150, 82, 108, 68, 9, 61, 46, 87, 20, 178, 216, 152, 217, 193, 87, 42, 63, 113, 143]");
-//                Log.i("Norman",token.toString());
-//
-//            }catch (Exception ex){
-//                ex.printStackTrace();
-//            }
-//
-//            NdefMessage ndefMessage = createNdefMessage(txtTagContent.getText()+""); //currently using the edittext to write into the token (for debugging)
-//            writeNdefMessage(tag,ndefMessage);
-//        }
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        enableForegroundDipatchSystem();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        disableForegroundDispatchSystem();
-//    }
-//
-//    /*
-//    enableForegroundDispatchSystem and disableForegroundDispatchSystem is for detecting whether got token or not
-//    */
-//    private void enableForegroundDipatchSystem(){
-//        Intent intent = new Intent(this, WriteTokenActivity.class).addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-//        IntentFilter[] intentFilters = new IntentFilter[] {};
-//        nfcAdapter.enableForegroundDispatch(this,pendingIntent,intentFilters,null);
-//    }
-//
-//    private void disableForegroundDispatchSystem(){
-//        nfcAdapter.disableForegroundDispatch(this);
-//    }
-//
-//    /*
-//        This method format the tag to NDEF format and write the message
-//     */
-//    private void formatTag(Tag tag, NdefMessage ndefMessage){
-//        try {
-//            NdefFormatable ndefFormatable = NdefFormatable.get(tag);
-//            if (ndefFormatable == null){
-//                Toast.makeText(this, "Tag is not ndef formatable!", Toast.LENGTH_LONG).show();
-//            }
-//            ndefFormatable.connect();
-//            ndefFormatable.format(ndefMessage);
-//            ndefFormatable.close();
-//
-//            Toast.makeText(this, "Tag written!", Toast.LENGTH_LONG).show();
-//        } catch (Exception e) {
-//            Log.e("formatTag",e.getMessage());
-//        }
-//    }
-//
-//    /*
-//        Write info to the token
-//     */
-//    private void writeNdefMessage(Tag tag, NdefMessage ndefMessage){
-//        try {
-//            if (tag == null) {
-//                Toast.makeText(this, "Tag object cannot be null", Toast.LENGTH_LONG).show();
-//                return;
-//            }
-//            Ndef ndef = Ndef.get(tag);
-//
-//            if (ndef == null){
-//                //format tag with the ndef format and writes the message
-//                formatTag(tag,ndefMessage);
-//            }
-//            else {
-//                ndef.connect();
-//
-//                if (!ndef.isWritable()) {
-//                    Toast.makeText(this, "Tag is not writable!", Toast.LENGTH_LONG).show();
-//                    ndef.close();
-//                    return;
-//                }
-//
-//                ndef.writeNdefMessage(ndefMessage);
-//                ndef.close();
-//                Toast.makeText(this, "Tag written", Toast.LENGTH_LONG).show();
-//            }
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    /*
-//        Creates an NDEF Record which contains typed data, such as MIME-type media, a URI, or a custom application payload.
-//     */
-//    private NdefRecord createTextRecord(String content){
-//        try {
-//            byte[] language;
-//            language = Locale.getDefault().getLanguage().getBytes("UTF-8");
-//            final byte[] text = content.getBytes("UTF-8");
-//            final int languageSize = language.length;
-//            final int textLength = text.length;
-//            final ByteArrayOutputStream payload = new ByteArrayOutputStream(1 + languageSize + textLength);
-//
-//            payload.write((byte) (languageSize & 0x1F));
-//            payload.write(language,0,languageSize);
-//            payload.write(text,0,textLength);
-//
-//            return new NdefRecord(NdefRecord.TNF_WELL_KNOWN,NdefRecord.RTD_TEXT,new byte[0],payload.toByteArray());
-//        }
-//        catch (UnsupportedEncodingException ex) {
-//            Log.e("createTextRecord", ex.getMessage());
-//        }
-//        return null;
-//    }
-//
-//    /*
-//        Creates an NDEF Message which is a container for one or more NDEF Records
-//     */
-//    private NdefMessage createNdefMessage(String content) {
-//        NdefRecord ndefRecord = createTextRecord(content);
-//        NdefMessage ndefMessage = new NdefMessage(new NdefRecord[] { ndefRecord});
-//        return ndefMessage;
-//    }
+
+    /*
+       If token is detected, write the token
+    */
+    @Override
+    protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
+
+        if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
+            Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
+
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            JSONObject token = new JSONObject();
+            try{
+                token.put("block_id","937efdbccc5295d88d02cad8b2eb67185273b985b7d78f95fa6ba04808117a28");
+                token.put("merkle_raw","44b93080f0d701ec235ba97b0a35fd0e8ad4fc2c570816495b636214beb696b5");
+                token.put("private_key", "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCsOx8bSB/7yq8D\nDUyRSINOFRFnHssBpv4KW7D/NTactulPUBJmDMsOFu1T/3bkoQUtmI5hnraox2ov\ntauhpPUpSqAGDgoHH9H5SLULQtlmhVuNWiBVB2abgp41nQTHCfrhMmBKRN/hhV1F\n3mqZUTXxqhkFLjWL7r0siCxfMMILef9Tu0+kER10zkqy5ra8NqUd0GmFxnObE3DY\n1tqZ6yHwpvgqR0PfwmPEfwxA/cL6WPVgIXKF05E3Ml6UMUAyv3skdeVdgdMBL4+E\nekgowqjnKcJsyueVLxVxapaXA+fR6BjSZDjNl1NLiqH5NlOYpIhwjFFR7ln7rquy\nRGAIFbvXAgMBAAECggEAFWdZg8nwU5nKKx5tfAafbsY2ffK5NtDadE4Vznl9+nbO\nwtEIIE+JsowN3Wj7jQknvBVf6GjReWMi4p/4nuOBpiqEfYwkGeON9CVhfm9F1jRP\nft8K8pYzXbMbVz1WuSeX2oGorsIlcoDg6QxtgfUyN4C0kEzAUc4PC2g233OPQd6o\nnedZc/TOE5vGt1O5EPPTpCF/CBXMqaQI1dgtv08b2zOh8daRgKtHfQxYFetjT/lN\nRnVike6VxKWw5ioyOQD7XXZyRui+0YXDpgT+w3XTwKnQAVCk3/193GXPRo/61zfm\nxD5lEPua4YWJF9dgsnU5w9AuNsIkrCvAJcsL/Am19QKBgQDFNbF35fnXZ1Ad7Kdc\nS4ePmfqhW5+Aoc74Fyrkic3JQyV+2RmQgiTt1PMEAXZsGOrJyvSPI4p24hAjbK5b\nJgQer229lILC67Wc6nio81podh7YkG2q75W2czqXwJxJoJ9Ya4TNK/al6TnFyfZL\nc5DnFESTwEPQyzIwCXuV8R4ZCwKBgQDfkyPvnxcxq+6I9kMc3+UE02bKHGPfbLpH\n0gAWM+ullS1zbKplvHwHDFQYJQQyXFOuRRS3RkZIi9/QMeWMY4aPILB3tMjh1rAV\nl60DWmp2BKV99y/bxLiil2oTqlgsCkDg1dreZPVAAvP5Y5XzX48OymektUCAWNkC\ndIWoOAMf5QKBgFUXo+muK62MAH/I+zXRyT5nHEO/ewVPzDQ0GufdphOvi2A+YM9/\nuFt+xRT3ZJej8Lr9faS9myNMy9XdMSZXMvPikiF5ESr19bktWr7bsijcvtaHCyr0\nkc7VzXRpQYZrbhYC3pyA2b4g8jKrwEAyL1Xl4uk1zo0rAA7GKLM8BNadAoGAGA3R\noPdB3JM977hnEhU4o6NG/Nm/GQuuowmB/uGJKeB56mA3mQiFY5C8/3gEEpMCYc6G\n4w0JhMafxtuHcepHUODYe5iUwE+D1F7kO2cf6yCm2X2dxYxNvRiDTihWoi5cOpRn\nnuPHyyJGM3+2Y1/VmWbHbd4eWXC1sGDu/GFCXM0CgYBmOSKC7LLSJT5mizpBnzmS\nWfyeTTnmKY2aiYAG6nX7gyA/gvwYFZM+PQSQPvtbGzJvEqNlLtxN2zjGnD8bcC7N\nMH0yEjEAnWpa/qJ1qd0QfiF/Z3OuI388o8ajxD17NX4CsPXv27VxXhisJwnTUJa+\nz/3l0pxOVOU2/uoR0ksrrQ==\n-----END PRIVATE KEY-----");
+                token.put("AES_key","[215, 94, 25, 236, 7, 4, 121, 162, 84, 219, 130, 14, 80, 150, 82, 108, 68, 9, 61, 46, 87, 20, 178, 216, 152, 217, 193, 87, 42, 63, 113, 143]");
+                Log.i("Norman",token.toString());
+
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            NdefMessage ndefMessage = createNdefMessage(txtTagContent.getText()+""); //currently using the edittext to write into the token (for debugging)
+            writeNdefMessage(tag,ndefMessage);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        enableForegroundDipatchSystem();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        disableForegroundDispatchSystem();
+    }
+
+    /*
+    enableForegroundDispatchSystem and disableForegroundDispatchSystem is for detecting whether got token or not
+    */
+    private void enableForegroundDipatchSystem(){
+        Intent intent = new Intent(this, WriteTokenActivity.class).addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        IntentFilter[] intentFilters = new IntentFilter[] {};
+        nfcAdapter.enableForegroundDispatch(this,pendingIntent,intentFilters,null);
+    }
+
+    private void disableForegroundDispatchSystem(){
+        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    /*
+        This method format the tag to NDEF format and write the message
+     */
+    private void formatTag(Tag tag, NdefMessage ndefMessage){
+        try {
+            NdefFormatable ndefFormatable = NdefFormatable.get(tag);
+            if (ndefFormatable == null){
+                Toast.makeText(this, "Tag is not ndef formatable!", Toast.LENGTH_LONG).show();
+            }
+            ndefFormatable.connect();
+            ndefFormatable.format(ndefMessage);
+            ndefFormatable.close();
+
+            Toast.makeText(this, "Tag written!", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Log.e("formatTag",e.getMessage());
+        }
+    }
+
+    /*
+        Write info to the token
+     */
+    private void writeNdefMessage(Tag tag, NdefMessage ndefMessage){
+        try {
+            if (tag == null) {
+                Toast.makeText(this, "Tag object cannot be null", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Ndef ndef = Ndef.get(tag);
+
+            if (ndef == null){
+                //format tag with the ndef format and writes the message
+                formatTag(tag,ndefMessage);
+            }
+            else {
+                ndef.connect();
+
+                if (!ndef.isWritable()) {
+                    Toast.makeText(this, "Tag is not writable!", Toast.LENGTH_LONG).show();
+                    ndef.close();
+                    return;
+                }
+
+                ndef.writeNdefMessage(ndefMessage);
+                ndef.close();
+                Toast.makeText(this, "Tag written", Toast.LENGTH_LONG).show();
+                new updateTokenTask().execute();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+        Creates an NDEF Record which contains typed data, such as MIME-type media, a URI, or a custom application payload.
+     */
+    private NdefRecord createTextRecord(String content){
+        try {
+            byte[] language;
+            language = Locale.getDefault().getLanguage().getBytes("UTF-8");
+            final byte[] text = content.getBytes("UTF-8");
+            final int languageSize = language.length;
+            final int textLength = text.length;
+            final ByteArrayOutputStream payload = new ByteArrayOutputStream(1 + languageSize + textLength);
+
+            payload.write((byte) (languageSize & 0x1F));
+            payload.write(language,0,languageSize);
+            payload.write(text,0,textLength);
+
+            return new NdefRecord(NdefRecord.TNF_WELL_KNOWN,NdefRecord.RTD_TEXT,new byte[0],payload.toByteArray());
+        }
+        catch (UnsupportedEncodingException ex) {
+            Log.e("createTextRecord", ex.getMessage());
+        }
+        return null;
+    }
+
+    /*
+        Creates an NDEF Message which is a container for one or more NDEF Records
+     */
+    private NdefMessage createNdefMessage(String content) {
+        NdefRecord ndefRecord = createTextRecord(content);
+        NdefMessage ndefMessage = new NdefMessage(new NdefRecord[] { ndefRecord});
+        return ndefMessage;
+    }
 
     public void onClick(View view) {
         //if successful
         new updateTokenTask().execute();
-
-        Intent intent = new Intent(this, MainLoggedInActivity.class);
-        startActivity(intent);
-
-        Toast.makeText(WriteTokenActivity.this, "Token update successful", Toast.LENGTH_SHORT).show();
-        finish();
 
         //else scan again
         //Toast.makeText(WriteTokenActivity.this, "Token Update was unsuccessful. Please scan your token again", Toast.LENGTH_SHORT).show();
@@ -232,7 +225,13 @@ public class WriteTokenActivity extends BaseActivity {
 
                 String message = saveToken(token);
 
-                Toast.makeText(WriteTokenActivity.this, result, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), MainLoggedInActivity.class);
+                startActivity(intent);
+
+                Toast.makeText(WriteTokenActivity.this, "Token update successful", Toast.LENGTH_SHORT).show();
+                finish();
+
+                //Toast.makeText(WriteTokenActivity.this, result, Toast.LENGTH_LONG).show();
             } catch (Exception ex){
                 ex.printStackTrace();
             }

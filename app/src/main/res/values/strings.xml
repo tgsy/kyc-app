@@ -48,7 +48,7 @@
     <string name="report_loss_read">PLEASE READ CAREFULLY BEFORE PROCEEDING:\n\n</string>
 
     <string name="report_token_text">
-        Replacement fee of S$20.00 applies.\nFor security reasons, you will have to re-register for KYC.\n\nIf your token is faulty, DO NOT CONTINUE.\n\nCall the blocktrace service hotline for a replacement and the replacement fee will be waived.
+        \nFor security reasons, you will have to re-register for KYC.\n\nIf your token is faulty, DO NOT CONTINUE.\n\nCall the blocktrace service hotline for a replacement instead.
     </string>
 
     <string name="token_loss_prompt">Please enter your NRIC/FIN number for verification purposes</string>

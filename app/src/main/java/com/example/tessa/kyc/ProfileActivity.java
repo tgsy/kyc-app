@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,7 +65,6 @@ public class ProfileActivity extends BaseActivity implements
     private EditText yyyyView;
     private ImageView mImageView;
     private TextView pleaseUpload;
-    private Spinner mSpinner;
     private ImageButton takePhotoButton;
     private Button verifyEmailButton;
     private StorageReference storageRef;
@@ -106,7 +104,6 @@ public class ProfileActivity extends BaseActivity implements
         yyyyView = (EditText) findViewById(R.id.Profile_DoB_Year_EditText);
         mImageView = (ImageView) findViewById(R.id.Profile_ImageView);
         pleaseUpload = (TextView) findViewById(R.id.Profile_pleaseUpload_TextView);
-        mSpinner = (Spinner) findViewById(R.id.Profile_Identification_spinner);
         takePhotoButton = (ImageButton) findViewById(R.id.Profile_TakePhoto_button);
         verifyEmailButton = (Button) findViewById(R.id.verify_email_button);
 
@@ -121,16 +118,6 @@ public class ProfileActivity extends BaseActivity implements
             statusView.setText("[VERIFIED]");
         else
             statusView.setText("[UNVERIFIED]");
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.identification_array, android.R.layout.simple_spinner_item);
-
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply the adapter to the spinner
-        mSpinner.setAdapter(adapter);
 
         // Create a storage reference from our app
         storageRef = FirebaseStorage.getInstance().getReference();
@@ -341,6 +328,7 @@ public class ProfileActivity extends BaseActivity implements
 
     @Override
     public void onBackPressed() {
+        mAuth.signOut();
         super.onBackPressed();
     }
 }

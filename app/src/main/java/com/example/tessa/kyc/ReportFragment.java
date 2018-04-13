@@ -5,10 +5,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -71,9 +75,10 @@ public class ReportFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 ID = input.getText().toString();
                                 new reportTokenLost().execute();
-                                mAuth.getCurrentUser().delete();
+                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                startActivity(intent);
+
                                 getActivity().finish();
-                                System.exit(0);
                             }
                         });
                 alertDialog.setNegativeButton("CANCEL",
@@ -115,9 +120,19 @@ public class ReportFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String result){
-            mUserRef.child("users").child(userID).child("status").setValue(3);
             Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
             Toast.makeText(getContext(), "Submission Successful", Toast.LENGTH_SHORT).show();
+
+            mAuth.getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Log.d("TAG", "User account deleted.");
+                        Toast.makeText(getActivity(),"User account deleted.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            mUserRef.getDatabase().getReference().child("users").child(userID).removeValue();
         }
     }
 

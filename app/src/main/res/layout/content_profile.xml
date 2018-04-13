@@ -19,41 +19,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="test"/>
+            android:text="test"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/Profile_Status_TextView"
-            android:layout_below="@+id/Profile_Email_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_Email_TextView"
             android:layout_gravity="center"
-            android:text="test"/>
+            android:text="test"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:id="@+id/Profile_ID_TextView"
-            android:layout_below="@+id/Profile_Status_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_Status_TextView"
             android:layout_gravity="center"
-            android:text="test"/>
+            android:text="test"
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/verify_email_button"
-            android:layout_below="@+id/Profile_ID_TextView"
+            style="@style/FirebaseUI.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:text="@string/verify_email"
+            android:layout_below="@+id/Profile_ID_TextView"
             android:onClick="onClick"
-            android:theme="@style/ThemeOverlay.MyDarkButton" />
+            android:text="@string/verify_email"
+            android:theme="@android:style/Animation" />
 
         <TextView
             android:id="@+id/Profile_FirstName_TextView"
-            android:layout_below="@+id/verify_email_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/verify_email_button"
             android:inputType="textPersonName"
-            android:text="Full Name"/>
+            android:text="Full Name"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/Profile_FirstName_EditText"
@@ -67,30 +73,14 @@
             android:singleLine="false" />
 
         <TextView
-            android:id="@+id/Profile_Address_TextView"
-            android:layout_below="@+id/Profile_FirstName_EditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:inputType="textPostalAddress"
-            android:maxLines="4"
-            android:text="Address"/>
-
-        <EditText
-            android:id="@+id/Profile_Address_EditText"
-            android:layout_below="@+id/Profile_Address_TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="4"
-            android:layout_gravity="center"/>
-
-        <TextView
             android:id="@+id/Profile_PostalCode_TextView"
-            android:layout_below="@+id/Profile_Address_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_FirstName_EditText"
             android:layout_gravity="left"
-            android:text="Postal Code"/>
+            android:text="Postal Code"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/Profile_PostalCode_EditText"
@@ -104,10 +94,12 @@
 
         <TextView
             android:id="@+id/Profile_DoB_TextView"
-            android:layout_below="@+id/Profile_PostalCode_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date of Birth"/>
+            android:layout_below="@+id/Profile_PostalCode_EditText"
+            android:text="Date of Birth"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/Profile_DoB_Day_EditText"
@@ -143,24 +135,13 @@
             android:hint="YYYY" />
 
         <TextView
-            android:id="@+id/Profile_Identification_TextView"
-            android:layout_below="@+id/Profile_DoB_Year_EditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choice of Identification Documents: "/>
-
-        <Spinner
-            android:id="@+id/Profile_Identification_spinner"
-            android:layout_below="@+id/Profile_Identification_TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
             android:id="@+id/Profile_IdentifNo_TextView"
-            android:layout_below="@+id/Profile_Identification_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Identification Number"/>
+            android:layout_below="@+id/Profile_DoB_Year_EditText"
+            android:text="Identification Number"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/Profile_IdentifNo_EditText"
@@ -171,10 +152,12 @@
 
         <TextView
             android:id="@+id/Profile_Image_TextView"
-            android:layout_below="@+id/Profile_IdentifNo_EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Image of verification document"/>
+            android:layout_below="@+id/Profile_IdentifNo_EditText"
+            android:text="Image of verification document"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/Profile_TakePhoto_button"
@@ -207,12 +190,14 @@
 
         <Button
             android:id="@+id/Profile_Submit_button"
-            android:layout_below="@+id/Profile_pleaseUpload_TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Next"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/Profile_pleaseUpload_TextView"
             android:layout_gravity="center"
+            android:elevation="0dp"
             android:onClick="onClick"
+            android:text="Next"
             android:theme="@style/ThemeOverlay.MyDarkButton" />
 
     </RelativeLayout>

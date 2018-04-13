@@ -133,7 +133,7 @@ public class LoginActivity extends BaseActivity implements
                     if (!dataSnapshot.exists()) {
                        goToActivity(ProfileActivity.class);
                     } else
-                        goToActivity(ReadTokenActivity.class);
+                        goToActivity(MainLoggedInActivity.class);
                 }
 
                 @Override
