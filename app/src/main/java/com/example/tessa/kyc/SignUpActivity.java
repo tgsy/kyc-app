@@ -42,12 +42,6 @@ public class SignUpActivity extends BaseActivity implements
     private EditText mEmailField;
     private EditText mPasswordField;
 
-    private JSONObject token;
-    private JSONObject tokenjson;
-    private PublicKey org_key;
-
-    private final String RegisterURL = "https://shielded-bayou-99151.herokuapp.com/register_user";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
