@@ -32,9 +32,6 @@ import java.util.Arrays;
 
 public class ReadTokenActivity extends BaseActivity {
 
-    JSONObject token;
-    JSONObject tokenjson;
-    PublicKey org_key;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -48,8 +45,6 @@ public class ReadTokenActivity extends BaseActivity {
     private String userID;
     private int companyID;
     private String companyName;
-
-    final String getKeyURL = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +67,10 @@ public class ReadTokenActivity extends BaseActivity {
             username = getIntent().getStringExtra("Username");
             password = getIntent().getStringExtra("Password");
         }
+
     }
 
-    public void onClick(View view) {
+   /* public void onClick(View view) {
         if (origin.equalsIgnoreCase("Company Login")) {
             //if token gives correct keys
             new LoginOrgTask().execute();
@@ -96,13 +92,16 @@ public class ReadTokenActivity extends BaseActivity {
 
             //else not successful
         }
-    }
+    }*/
 
     //for register organization
     class RegisterOrgTask extends AsyncTask<String,Void,String> {
+        JSONObject token;
         @Override
         protected String doInBackground(String... params) {
+            String tokenStr = params[0];
             try {
+                token = new JSONObject(tokenStr);
                 //get the public key from companybackend to encrypt the info to be sent to company, the info to be sent is in JSON format
                 String request_and_key = Http_Get("https://shielded-bayou-99151.herokuapp.com/get_key");
 
@@ -117,9 +116,9 @@ public class ReadTokenActivity extends BaseActivity {
                 register_org_info.put("username", username);
                 register_org_info.put("password", BlocktraceCrypto.hash256(password));
 
-                JSONObject token = getToken();
+                //JSONObject token = getToken();
                 register_org_info.put("block_id", token.get("block_id"));
-                register_org_info.put("AES_key", token.get("AES_key"));
+                //register_org_info.put("AES_key", token.get("AES_key"));
 
                 JSONObject encrypted_info = encrypt_json(register_org_info,publicKeyByte);
 
@@ -136,7 +135,10 @@ public class ReadTokenActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
-            /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
+            mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
+
+            Log.i("NORMAN","result:"+result);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
             alertDialog.setTitle("Update Token");
             alertDialog.setMessage("Please update your token");
             final EditText input = new EditText(ReadTokenActivity.this);
@@ -149,35 +151,28 @@ public class ReadTokenActivity extends BaseActivity {
             alertDialog.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent (getBaseContext(), WriteTokenActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
+                            intent.putExtra("KEY", token.toString());
                             startActivity(intent);
+                            Toast.makeText(getApplicationContext(),
+                                    companyName+" Registration Successful",
+                                    Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     });
-            alertDialog.show();*/
-            try {
-                Log.i("NORMAN","result:"+result);
-                token = new JSONObject(result);
-                mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
-                Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
-                intent.putExtra("KEY", token.toString());
-                startActivity(intent);
-                Toast.makeText(getApplicationContext(),
-                        companyName+" Registration Successful",
-                        Toast.LENGTH_SHORT).show();
-                finish();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            alertDialog.show();
 
         }
     }
 
     //for login organization
     class LoginOrgTask extends AsyncTask<String,Void,String> {
+        JSONObject token;
         @Override
         protected String doInBackground(String... params) {
-
+            String tokenStr = params[0];
             try {
+                token = new JSONObject(tokenStr);
                 //get the public key from company backend for encryption of the object to be sent to company backend
                 String request_and_key = Http_Get("https://shielded-bayou-99151.herokuapp.com/get_key");
 
@@ -187,24 +182,25 @@ public class ReadTokenActivity extends BaseActivity {
 
                 byte[] publicKeyByte = BlocktraceCrypto.pemToBytes(str_pub_key);
 
-                JSONObject token = getToken();
-                String merkle_raw = token.get("merkle_raw").toString();
-                Log.i("Norman",merkle_raw);
+                //JSONObject token = getToken();
+                //String merkle_raw = token.get("merkle_raw").toString();
+                //Log.i("Norman",merkle_raw);
+
 
                 //get user private key and encrypt the merkle root
-                byte[] userPrivateKeyByte = BlocktraceCrypto.pemToBytes(token.get("private_key").toString());
+                //byte[] userPrivateKeyByte = BlocktraceCrypto.pemToBytes(token.get("private_key").toString());
 
-                String encryptedMerkle = Arrays.toString(BlocktraceCrypto.sign(merkle_raw,userPrivateKeyByte));
+                //String encryptedMerkle = Arrays.toString(BlocktraceCrypto.sign(merkle_raw,userPrivateKeyByte));
 
                 JSONObject loginObject = new JSONObject();
                 loginObject.put("username", username);
                 loginObject.put("password", BlocktraceCrypto.hash256(password));
                 loginObject.put("request_id", request_id);
                 loginObject.put("block_id",token.get("block_id"));
-                loginObject.put("merkle_raw",encryptedMerkle);
+                //loginObject.put("merkle_raw",encryptedMerkle);
 
                 Log.i("Norman","happy");
-                Log.i("Norman",encryptedMerkle);
+                //Log.i("Norman",encryptedMerkle);
                 Log.i("Norman", loginObject.toString());
 
                 JSONObject encrypted_info = encrypt_json(loginObject,publicKeyByte);
@@ -221,10 +217,8 @@ public class ReadTokenActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            try {
-                token = new JSONObject(result);
-                Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
+            Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
+ /*               AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
                 alertDialog.setTitle("Update Token");
                 alertDialog.setMessage("Please update your token");
                 final EditText input = new EditText(ReadTokenActivity.this);
@@ -242,88 +236,98 @@ public class ReadTokenActivity extends BaseActivity {
                                 startActivity(intent);
                             }
                         });
-                alertDialog.show();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                alertDialog.show();*/
         }
 
     }
 
-//   /*
-//       This method is to detect the NFC Tag and perform reading token function
-//   */
-//    @Override
-//    protected void onNewIntent(Intent intent){
-//        super.onNewIntent(intent);
-//
-//        if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
-//            Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
-//            Parcelable[] parcelables;
-//            parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-//            if (parcelables != null && parcelables.length>0){
-//                readTextFromMessage((NdefMessage)parcelables[0]);
-//            }
-//        }
-//    }
-//
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        enableForegroundDipatchSystem();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        disableForegroundDispatchSystem();
-//    }
-//    /*
-//        enableForegroundDispatchSystem and disableForegroundDispatchSystem is for detecting whether got token or not
-//     */
-//    private void enableForegroundDipatchSystem(){
-//        Intent intent = new Intent(this, ReadTokenActivity.class).addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-//        IntentFilter[] intentFilters = new IntentFilter[] {};
-//        nfcAdapter.enableForegroundDispatch(this,pendingIntent,intentFilters,null);
-//    }
-//
-//    private void disableForegroundDispatchSystem(){
-//        nfcAdapter.disableForegroundDispatch(this);
-//    }
-//
-//    /*
-//        This method is for retrieving the info in the token
-//     */
-//    public String getTextFromNdefRecord(NdefRecord ndefRecord){
-//        String tagContent = null;
-//        try {
-//            byte[] payload = ndefRecord.getPayload();
-//            String textEncoding = ((payload[0] & 128)==0)?"UTF-8":"UTF-16";
-//            int languageSize = payload[0] & 0063;
-//            tagContent = new String(payload, languageSize + 1, payload.length - languageSize -1, textEncoding);
-//
-//        }catch (UnsupportedEncodingException ex){
-//            Log.e("getTextFromNdefRecord",ex.getMessage(),ex);
-//        }
-//        return tagContent;
-//    }
-//
-//    /*
-//        This method is to perform reading on the info received from the token
-//     */
-//    private void readTextFromMessage(NdefMessage ndefMessage){
-//        NdefRecord[] ndefRecords = ndefMessage.getRecords();
-//        if (ndefRecords != null && ndefRecords.length>0){
-//            NdefRecord ndefRecord = ndefRecords[0];
-//            String tagContent = getTextFromNdefRecord(ndefRecord);
-//            content.setText(tagContent);
-//        }
-//        else{
-//            Toast.makeText(this,"No NDEF records found!",Toast.LENGTH_LONG).show();
-//        }
-//    }
+   /*
+       This method is to detect the NFC Tag and perform reading token function
+   */
+    @Override
+    protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
+        String tokenStr;
+        if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
+            Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
+            Parcelable[] parcelables;
+            parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            if (parcelables != null && parcelables.length>0){
+                tokenStr = readTextFromMessage((NdefMessage)parcelables[0]);
+                try {
+                    if (origin.equalsIgnoreCase("Company Login")){
+                        new LoginOrgTask().execute(tokenStr);
+                    }
+
+                    else if (origin.equalsIgnoreCase("Company Registration")){
+                        new RegisterOrgTask().execute(tokenStr);
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        enableForegroundDipatchSystem();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        disableForegroundDispatchSystem();
+    }
+    /*
+        enableForegroundDispatchSystem and disableForegroundDispatchSystem is for detecting whether got token or not
+     */
+    private void enableForegroundDipatchSystem(){
+        Intent intent = new Intent(this, ReadTokenActivity.class).addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        IntentFilter[] intentFilters = new IntentFilter[] {};
+        nfcAdapter.enableForegroundDispatch(this,pendingIntent,intentFilters,null);
+    }
+
+    private void disableForegroundDispatchSystem(){
+        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    /*
+        This method is for retrieving the info in the token
+     */
+    public String getTextFromNdefRecord(NdefRecord ndefRecord){
+        String tagContent = null;
+        try {
+            byte[] payload = ndefRecord.getPayload();
+            String textEncoding = ((payload[0] & 128)==0)?"UTF-8":"UTF-16";
+            int languageSize = payload[0] & 0063;
+            tagContent = new String(payload, languageSize + 1, payload.length - languageSize -1, textEncoding);
+
+        }catch (UnsupportedEncodingException ex){
+            Log.e("getTextFromNdefRecord",ex.getMessage(),ex);
+        }
+        return tagContent;
+    }
+
+    /*
+        This method is to perform reading on the info received from the token
+     */
+    private String readTextFromMessage(NdefMessage ndefMessage){
+        NdefRecord[] ndefRecords = ndefMessage.getRecords();
+        String tagContent = "";
+        if (ndefRecords != null && ndefRecords.length>0){
+            NdefRecord ndefRecord = ndefRecords[0];
+            tagContent = getTextFromNdefRecord(ndefRecord);
+            content.setText(tagContent);
+        }
+        else{
+            Toast.makeText(this,"No NDEF records found!",Toast.LENGTH_LONG).show();
+        }
+        return tagContent;
+    }
 
 
 }
