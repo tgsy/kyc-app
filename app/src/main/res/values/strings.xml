@@ -41,7 +41,8 @@
 
     <string name="app_shared_userId">com.example.tessa</string>
 
-    <string name="scan_nfc_token">Please scan your nfc token</string>
+    <string name="scan_nfc_token">Please scan your blocktrace token</string>
+    <string name="scan_nfc_token_write">Please scan your blocktrace token again</string>
 
     <string name="report_token_loss">Report loss of token</string>
 

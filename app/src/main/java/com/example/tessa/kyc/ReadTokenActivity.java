@@ -63,6 +63,7 @@ public class ReadTokenActivity extends BaseActivity {
 
         if (origin.equalsIgnoreCase("Company Login") ||
                 origin.equalsIgnoreCase("Company Registration")) {
+            companyID = getIntent().getIntExtra("Company ID", 1000);
             companyName = getIntent().getStringExtra("Company Name");
             username = getIntent().getStringExtra("Username");
             password = getIntent().getStringExtra("Password");
@@ -118,7 +119,7 @@ public class ReadTokenActivity extends BaseActivity {
 
                 //JSONObject token = getToken();
                 register_org_info.put("block_id", token.get("block_id"));
-                //register_org_info.put("AES_key", token.get("AES_key"));
+                register_org_info.put("AES_key", token.get("AES_key"));
 
                 JSONObject encrypted_info = encrypt_json(register_org_info,publicKeyByte);
 
@@ -128,6 +129,7 @@ public class ReadTokenActivity extends BaseActivity {
                 return result;
 
             } catch (Exception ex) {
+                Toast.makeText(ReadTokenActivity.this, "Oh no, something went wrong. Please scan your blocktrace again.", Toast.LENGTH_LONG).show();
                 return "Exception: " + ex.getMessage();
             }
         }
@@ -136,9 +138,17 @@ public class ReadTokenActivity extends BaseActivity {
         protected void onPostExecute(String result) {
             Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
             mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
-
             Log.i("NORMAN","result:"+result);
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
+
+            Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
+            intent.putExtra("KEY", token.toString());
+            startActivity(intent);
+            Toast.makeText(getApplicationContext(),
+                    companyName+" Registration Successful",
+                    Toast.LENGTH_SHORT).show();
+            finish();
+
+            /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
             alertDialog.setTitle("Update Token");
             alertDialog.setMessage("Please update your token");
             final EditText input = new EditText(ReadTokenActivity.this);
@@ -160,8 +170,7 @@ public class ReadTokenActivity extends BaseActivity {
                             finish();
                         }
                     });
-            alertDialog.show();
-
+            alertDialog.show();*/
         }
     }
 
@@ -183,24 +192,24 @@ public class ReadTokenActivity extends BaseActivity {
                 byte[] publicKeyByte = BlocktraceCrypto.pemToBytes(str_pub_key);
 
                 //JSONObject token = getToken();
-                //String merkle_raw = token.get("merkle_raw").toString();
-                //Log.i("Norman",merkle_raw);
+                String merkle_raw = token.get("merkle_raw").toString();
+                Log.i("Norman",merkle_raw);
 
 
                 //get user private key and encrypt the merkle root
-                //byte[] userPrivateKeyByte = BlocktraceCrypto.pemToBytes(token.get("private_key").toString());
+                byte[] userPrivateKeyByte = BlocktraceCrypto.pemToBytes(token.get("private_key").toString());
 
-                //String encryptedMerkle = Arrays.toString(BlocktraceCrypto.sign(merkle_raw,userPrivateKeyByte));
+                String encryptedMerkle = Arrays.toString(BlocktraceCrypto.sign(merkle_raw,userPrivateKeyByte));
 
                 JSONObject loginObject = new JSONObject();
                 loginObject.put("username", username);
                 loginObject.put("password", BlocktraceCrypto.hash256(password));
                 loginObject.put("request_id", request_id);
                 loginObject.put("block_id",token.get("block_id"));
-                //loginObject.put("merkle_raw",encryptedMerkle);
+                loginObject.put("merkle_raw",encryptedMerkle);
 
                 Log.i("Norman","happy");
-                //Log.i("Norman",encryptedMerkle);
+                Log.i("Norman",encryptedMerkle);
                 Log.i("Norman", loginObject.toString());
 
                 JSONObject encrypted_info = encrypt_json(loginObject,publicKeyByte);
@@ -217,7 +226,10 @@ public class ReadTokenActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
+            /*Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();*/
+            Toast.makeText(getApplicationContext(),
+                    companyName+" Registration Successful",
+                    Toast.LENGTH_SHORT).show();
  /*               AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
                 alertDialog.setTitle("Update Token");
                 alertDialog.setMessage("Please update your token");
@@ -237,6 +249,8 @@ public class ReadTokenActivity extends BaseActivity {
                             }
                         });
                 alertDialog.show();*/
+            startActivity(new Intent(ReadTokenActivity.this, MainLoggedInActivity.class));
+            finish();
         }
 
     }

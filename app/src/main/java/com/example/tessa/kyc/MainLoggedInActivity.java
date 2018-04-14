@@ -35,7 +35,7 @@ public class MainLoggedInActivity
     private FirebaseUser currentUser;
     private String userID;
     private DatabaseReference statusRef;
-    private int status;
+    private long status;
 
     Fragment fragment;
     Class fragmentClass;
@@ -56,7 +56,8 @@ public class MainLoggedInActivity
         statusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                status = Integer.valueOf(dataSnapshot.getValue().toString());
+                Log.i("DED", "status="+dataSnapshot.getValue().toString());
+                status = (long) dataSnapshot.getValue();
             }
 
             @Override

@@ -1,9 +1,11 @@
 package com.example.tessa.kyc;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -47,6 +49,8 @@ public class MainLoggedInFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+    private String email;
+    private String id;
     private String userID;
 
     private DatabaseReference mDatabase;
@@ -84,11 +88,15 @@ public class MainLoggedInFragment extends Fragment {
         usersRef = mDatabase.child("users").child(userID);
         statusRef = usersRef.child("status");
 
+        Intent intent = getActivity().getIntent();
+        email = intent.getStringExtra("E-mail");
+        id = intent.getStringExtra("ID");
+
         status = new HashMap<>();
         status.put(0, "Pending Verification");
         status.put(1, "Pending Token Generation");
         status.put(2, "Verified Customer");
-        status.put(3, "Lost Token");
+        status.put(3, "Profile Update Required");
 
         downloadFile();
     }
@@ -121,7 +129,7 @@ public class MainLoggedInFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.i("DATASNAPSHOT", "getvalue: "+dataSnapshot.getValue());
-                if ((long) dataSnapshot.getValue()==2) {
+                /*if ((long) dataSnapshot.getValue()==2) {
                     PackageManager packageManager = getActivity().getPackageManager();
                     try {
                         appInfo = packageManager.getApplicationInfo(packageName,PackageManager.GET_META_DATA);
@@ -134,6 +142,14 @@ public class MainLoggedInFragment extends Fragment {
                     } catch (Exception ex){
                         ex.printStackTrace();
                     }
+                }*/
+                 if ((long) dataSnapshot.getValue()==3) {
+                    Intent intent = new Intent (getActivity(), ProfileActivity.class);
+                    intent.putExtra("Origin", "Update");
+                    intent.putExtra("E-mail", email);
+                    intent.putExtra("ID", id);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
                 tokenStatusView.setText(status.get(Integer.valueOf(dataSnapshot.getValue().toString())));
             }

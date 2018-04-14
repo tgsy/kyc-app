@@ -90,6 +90,7 @@ public class CompanySignUpActivity extends BaseActivity {
             case R.id.Company_link_button:
                 Intent intent = new Intent(this, ReadTokenActivity.class);
                 intent.putExtra("Company Name", validCompanies.get(companyID));
+                intent.putExtra("Company ID", companyID);
                 intent.putExtra("Origin", "Company Registration");
 //                intent.putExtra("Token", getToken().toString());
                 intent.putExtra("Username", usernameEditText.getText().toString());

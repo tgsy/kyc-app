@@ -132,8 +132,9 @@ public class LoginActivity extends BaseActivity implements
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (!dataSnapshot.exists()) {
                        goToActivity(ProfileActivity.class);
-                    } else
+                    } else {
                         goToActivity(MainLoggedInActivity.class);
+                    }
                 }
 
                 @Override
