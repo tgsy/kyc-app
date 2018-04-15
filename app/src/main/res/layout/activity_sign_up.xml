@@ -29,6 +29,7 @@ android:orientation="vertical">
         android:layout_height="wrap_content"
         android:background="@color/grey_300"
         android:gravity="center"
+        android:paddingBottom="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -65,7 +66,9 @@ android:orientation="vertical">
         android:text="@string/create_account"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:paddingTop="10dp"
         android:onClick="onClick"
+        android:textAllCaps="true"
         android:theme="@style/ThemeOverlay.MyDarkButton" />
 
 </LinearLayout>

@@ -1,19 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:layout_margin="30dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.tessa.kyc.ProfileActivity">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <include layout="@layout/content_profile" />
+        <TextView
+            android:id="@+id/Profile_Header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/input_regular"
+            android:lineSpacingExtra="12sp"
+            android:paddingBottom="16dp"
+            android:text="@string/update_profile"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
-</android.support.design.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/Profile_EmailTitle_TextView"
+            android:layout_below="@+id/Profile_Header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/email"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/Profile_Email_TextView"
+            android:layout_below="@+id/Profile_EmailTitle_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/placeholder_text"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/Profile_ID_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_Email_TextView"
+            android:layout_gravity="center"
+            android:paddingBottom="10dp"
+            android:text="@string/placeholder_text"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/Profile_FullName_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_ID_TextView"
+            android:text="@string/full_name"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/Profile_FullName_EditText"
+            android:layout_below="@+id/Profile_FullName_TextView"
+            android:nextFocusDown="@+id/Profile_PostalCode_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:inputType="textPersonName"
+            android:selectAllOnFocus="false"
+            android:paddingBottom="10dp"
+            android:shadowColor="@color/colorAccent"
+            android:singleLine="false" />
+
+        <TextView
+            android:id="@+id/Profile_PostalCode_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_FullName_EditText"
+            android:layout_gravity="start"
+            android:text="@string/postal_code"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/Profile_PostalCode_EditText"
+            android:nextFocusDown="@+id/Profile_DoB_Day_EditText"
+            android:layout_below="@+id/Profile_PostalCode_TextView"
+            android:layout_width="100dp"
+            android:inputType="number"
+            android:maxLength="6"
+            android:maxLines="1"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:layout_gravity="start"/>
+
+        <TextView
+            android:id="@+id/Profile_DoB_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_PostalCode_EditText"
+            android:text="@string/dob"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/Profile_DoB_Day_EditText"
+            android:nextFocusDown="@+id/Profile_DoB_Month_EditText"
+            android:layout_below="@+id/Profile_DoB_TextView"
+            android:hint="DD"
+            android:inputType="date"
+            android:singleLine="true"
+            android:maxLength="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:shadowColor="@color/colorAccent"/>
+
+
+        <EditText
+            android:id="@+id/Profile_DoB_Month_EditText"
+            android:nextFocusDown="@+id/Profile_DoB_Year_EditText"
+            android:layout_below="@+id/Profile_DoB_TextView"
+            android:layout_toEndOf="@+id/Profile_DoB_Day_EditText"
+            android:hint="MM"
+            android:inputType="number"
+            android:maxLength="2"
+            android:singleLine="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shadowColor="@color/colorAccent"/>
+
+        <EditText
+            android:id="@+id/Profile_DoB_Year_EditText"
+            android:nextFocusDown="@+id/Profile_IdentifNo_EditText"
+            android:layout_below="@+id/Profile_DoB_TextView"
+            android:layout_toEndOf="@+id/Profile_DoB_Month_EditText"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:singleLine="true"
+            android:maxLength="4"
+            android:paddingBottom="10dp"
+            android:shadowColor="@color/colorAccent"
+            android:hint="YYYY" />
+
+        <TextView
+            android:id="@+id/Profile_IdentifNo_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_DoB_Year_EditText"
+            android:text="@string/id_no"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/Profile_IdentifNo_EditText"
+            android:layout_below="@+id/Profile_IdentifNo_TextView"
+            android:layout_width="200dp"
+            android:maxLines="1"
+            android:paddingBottom="10dp"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/Profile_Image_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_IdentifNo_EditText"
+            android:text="@string/image_verdoc"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/Profile_TakePhoto_button"
+            android:layout_below="@+id/Profile_IdentifNo_EditText"
+            android:layout_toEndOf="@+id/Profile_Image_TextView"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:onClick="onClick"
+            android:scaleType="centerInside"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_add_a_photo_black_24dp" />
+
+        <ImageView
+            android:id="@+id/Profile_ImageView"
+            android:contentDescription="@string/content_attribute"
+            android:layout_below="@+id/Profile_TakePhoto_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/Profile_pleaseUpload_TextView"
+            android:layout_below="@+id/Profile_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="8sp"
+            android:text="@string/validate_image_upload"
+            android:textColor="#B22222"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/Profile_Submit_button"
+            style="@style/FirebaseUI.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/Profile_pleaseUpload_TextView"
+            android:layout_gravity="center"
+            android:onClick="onClick"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/submit"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>

@@ -101,24 +101,13 @@
         android:textStyle="bold"
         android:visibility="gone"/>
 
-    <!--<Button
-        android:id="@+id/Login_forgotPwd"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Forgot Password?"
-        android:textAllCaps="true"
-        android:textSize="10sp"
-        android:textStyle="italic" />-->
-
     <Button
         android:id="@+id/Login_signUp"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="New to us? Sign Up"
+        android:text="@string/new_users"
         android:textColor="@color/colorAccent"
         android:textSize="10sp"
         android:textStyle="italic"

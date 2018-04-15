@@ -10,9 +10,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/company_login"
+        android:textAlignment="center"
+        android:layout_gravity="center"
         android:layout_margin="16dp"
-        android:textAllCaps="true" />
+        android:fontFamily="@font/input_regular"
+        android:textColor="@color/black"
+        android:text="@string/company_login"
+        android:textSize="20sp"/>
 
     <ImageView
         android:id="@+id/CompanyLogin_logo"
@@ -38,7 +42,7 @@
                 android:id="@+id/CompanyLogin_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_email"
+                android:hint="@string/prompt_username"
                 android:onClick="onClick"
                 android:inputType="textEmailAddress" />
 

@@ -8,6 +8,8 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
 
+    <string name="placeholder_text">Placeholder text here</string>
+
     <string name="loading">Loading…</string>
 
     <string name="custom_token">Custom Token</string>
@@ -44,7 +46,7 @@
     <string name="scan_nfc_token">Please scan your blocktrace token</string>
     <string name="scan_nfc_token_write">Please scan your blocktrace token again</string>
 
-    <string name="report_token_loss">Report loss of token</string>
+    <string name="report_token_loss">Report Loss of Token</string>
 
     <string name="report_loss_read">PLEASE READ CAREFULLY BEFORE PROCEEDING:\n\n</string>
 
@@ -57,6 +59,18 @@
     <string name="agree_and_continue">Continue</string>
 
     <string name="content_attribute">Content_Attribute</string>
+
+    <string name="update_profile">Update your profile</string>
+
+    <string name="email">E-mail</string>
+    <string name="full_name">Full Name (as in NRIC/Passport)</string>
+    <string name="postal_code">Postal Code</string>
+    <string name="id_no">Identification Number</string>
+    <string name="dob">Date of Birth</string>
+    <string name="image_verdoc">Image of verification document</string>
+    <string name="submit">Submit</string>
+
+    <string name="new_users">New to us? Sign Up</string>
 
 
 

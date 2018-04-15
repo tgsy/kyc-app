@@ -36,6 +36,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,6 +55,7 @@ public class ProfileActivity extends BaseActivity implements
     private Uri downloadUri;
     private Uri filePath;
 
+    private TextView headerView;
     private TextView emailView;
     private TextView statusView;
     private TextView idView;
@@ -66,7 +68,6 @@ public class ProfileActivity extends BaseActivity implements
     private ImageView mImageView;
     private TextView pleaseUpload;
     private ImageButton takePhotoButton;
-    private Button verifyEmailButton;
     private StorageReference storageRef;
     private Bitmap imageBitmap;
 
@@ -89,8 +90,8 @@ public class ProfileActivity extends BaseActivity implements
         mDatabase = FirebaseDatabase.getInstance().getReference();
         usersRef = mDatabase.child("users").child(userID);
 
+        headerView = (TextView) findViewById(R.id.Profile_Header);
         emailView = (TextView) findViewById(R.id.Profile_Email_TextView);
-        statusView = (TextView) findViewById(R.id.Profile_Status_TextView);
         idView = (TextView) findViewById(R.id.Profile_ID_TextView);
         nameView = (EditText) findViewById(R.id.Profile_FirstName_EditText);
         postalCodeView = (EditText) findViewById(R.id.Profile_PostalCode_EditText);
@@ -101,70 +102,22 @@ public class ProfileActivity extends BaseActivity implements
         mImageView = (ImageView) findViewById(R.id.Profile_ImageView);
         pleaseUpload = (TextView) findViewById(R.id.Profile_pleaseUpload_TextView);
         takePhotoButton = (ImageButton) findViewById(R.id.Profile_TakePhoto_button);
-        verifyEmailButton = (Button) findViewById(R.id.verify_email_button);
-
 
         Intent intent = getIntent();
         emailView.setText(intent.getStringExtra("E-mail"));
         idView.setText(intent.getStringExtra("ID"));
 
-        if (mAuth.getCurrentUser().isEmailVerified())
-            statusView.setText("[VERIFIED]");
-        else
-            statusView.setText("[UNVERIFIED]");
-
         // Create a storage reference from our app
         storageRef = FirebaseStorage.getInstance().getReference();
-
-        if (mAuth.getCurrentUser()!=null &&
-                mAuth.getCurrentUser().isEmailVerified())
-            verifyEmailButton.setEnabled(false);
-
-        if (mAuth.getCurrentUser().isEmailVerified())
-            verifyEmailButton.setVisibility(View.INVISIBLE);
-
-        //downloadImageFromFirebase();
-
-    }
-
-    private void sendEmailVerification() {
-        // Disable button
-        findViewById(R.id.verify_email_button).setEnabled(false);
-
-        // Send verification email
-        // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
-
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        findViewById(R.id.verify_email_button).setEnabled(true);
-
-                        if (task.isSuccessful()) {
-                            Toast.makeText(ProfileActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(ProfileActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.verify_email_button) {
-            sendEmailVerification();
-        }
         if (i == R.id.Profile_TakePhoto_button) {
             dispatchTakePictureIntent();
         }
-        if (i == R.id.Profile_Submit_button) {
+        else if (i == R.id.Profile_Submit_button) {
             if (validateForm()
                     && validateImageUpload()) {
                 String fn = nameView.getText().toString();
@@ -279,9 +232,7 @@ public class ProfileActivity extends BaseActivity implements
 
     private boolean validateImageUpload() {
         boolean valid = true;
-
         if (mImageView.getVisibility()==View.GONE) {
-            pleaseUpload.setText(getResources().getString(R.string.validate_image_upload));
             pleaseUpload.setVisibility(View.VISIBLE);
             valid = false;
         } else
@@ -313,7 +264,6 @@ public class ProfileActivity extends BaseActivity implements
             usersRef.child("company").child(String.valueOf(count)).setValue(false);
             count++;
         }
-
         usersRef.child("status").setValue(0);
         usersRef.child("uid").setValue(mAuth.getCurrentUser().getUid());
         usersRef.child("token_access").setValue(0);

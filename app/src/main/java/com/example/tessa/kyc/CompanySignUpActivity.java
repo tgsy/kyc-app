@@ -34,17 +34,12 @@ public class CompanySignUpActivity extends BaseActivity {
 
     private int companyID;
     private EditText companyIDEditText;
-    private Button signUpButton;
     private EditText usernameEditText;
     private EditText passwordEditText;
-    private Button linkAccountButton;
     private ImageView companyLogo;
 
-    private String username;
-    private String password;
-
-    private HashMap<Integer,String> validCompanies;
-    private HashMap<Integer,String> companyImages;
+    private HashMap<Integer,String> validCompanies = new HashMap<>();
+    private HashMap<Integer,String> companyImages = new HashMap<>();
 
     private StorageReference mImageRef;
 
@@ -59,22 +54,14 @@ public class CompanySignUpActivity extends BaseActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         companyIDEditText = (EditText) findViewById(R.id.company_id);
-        signUpButton = (Button) findViewById(R.id.company_submit);
-
         usernameEditText = (EditText) findViewById(R.id.Company_email);
         passwordEditText = (EditText)findViewById(R.id.Company_password);
-
-        linkAccountButton = (Button) findViewById(R.id.Company_link_button);
-
         companyLogo = (ImageView) findViewById(R.id.company_logo);
-
         mImageRef = FirebaseStorage.getInstance().getReference().child("companylogos");
 
         String jsonString = parseJson(FILE);
         List<Company> list = Arrays.asList(new Gson().
                 fromJson(jsonString, Company[].class));
-        validCompanies = new HashMap<>();
-        companyImages = new HashMap<>();
 
         for (Company c:list) {
             validCompanies.put(c.getId(), c.getName());
@@ -88,13 +75,15 @@ public class CompanySignUpActivity extends BaseActivity {
                 checkforCompany(companyIDEditText);
                 break;
             case R.id.Company_link_button:
+                String username = usernameEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
                 Intent intent = new Intent(this, ReadTokenActivity.class);
                 intent.putExtra("Company Name", validCompanies.get(companyID));
                 intent.putExtra("Company ID", companyID);
                 intent.putExtra("Origin", "Company Registration");
 //                intent.putExtra("Token", getToken().toString());
-                intent.putExtra("Username", usernameEditText.getText().toString());
-                intent.putExtra("Password", passwordEditText.getText().toString());
+                intent.putExtra("Username", username);
+                intent.putExtra("Password", password);
                 startActivity(intent);
         }
     }
@@ -104,12 +93,14 @@ public class CompanySignUpActivity extends BaseActivity {
             //do not allow integer
             companyID = Integer.valueOf(companyid.getText().toString());
             if (validCompanies.containsKey(companyID)) {
+                showProgressDialog();
                 findViewById(R.id.company_submit).setVisibility(View.GONE);
                 Glide.with(this)
                         .load(mImageRef.child(companyImages.get(companyID)))
                         .into(companyLogo);
                 findViewById(R.id.Company_email_password_fields).setVisibility(View.VISIBLE);
                 findViewById(R.id.Company_link_button).setVisibility(View.VISIBLE);
+                hideProgressDialog();
 
             } else Toast.makeText(CompanySignUpActivity.this,
                     "Please enter a valid company ID",
@@ -130,9 +121,7 @@ public class CompanySignUpActivity extends BaseActivity {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return output;
@@ -147,7 +136,6 @@ public class CompanySignUpActivity extends BaseActivity {
         } else {
             companyIDEditText.setError(null);
         }
-
         return valid;
     }
 
