@@ -8,6 +8,7 @@
     tools:context=".CompanyLoginActivity">
 
     <TextView
+        android:id="@+id/CompanyLogin_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
@@ -39,16 +40,17 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/CompanyLogin_email"
+                android:id="@+id/CompanyLogin_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_username"
+                android:nextFocusDown="@id/CompanyLogin_password"
                 android:onClick="onClick"
                 android:inputType="textEmailAddress" />
 
             <EditText
                 android:id="@+id/CompanyLogin_password"
-                android:layout_below="@+id/CompanyLogin_email"
+                android:layout_below="@+id/CompanyLogin_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_password"

@@ -56,8 +56,9 @@ public class MainLoggedInActivity
         statusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("DED", "status="+dataSnapshot.getValue().toString());
-                status = (long) dataSnapshot.getValue();
+                if (dataSnapshot.exists())
+                //Log.i("DED", "status="+dataSnapshot.getValue().toString());
+                    status = (long) dataSnapshot.getValue();
             }
 
             @Override

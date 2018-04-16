@@ -45,6 +45,7 @@ android:orientation="vertical">
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_email"
+                android:nextFocusDown="@id/SignUp_password"
                 android:onClick="onClick"
                 android:inputType="textEmailAddress" />
 

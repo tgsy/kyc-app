@@ -1,8 +1,10 @@
 package com.example.tessa.kyc;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -47,50 +50,42 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class MainLoggedInFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
+    private Activity thisActivity;
     private String email;
     private String id;
-    private String userID;
 
-    private DatabaseReference mDatabase;
-    private DatabaseReference usersRef;
+    private DatabaseReference nameRef;
     private DatabaseReference statusRef;
 
-    private FirebaseStorage storage;
     private StorageReference storageRef;
-    private StorageReference islandRef;
 
-    private TextView emailView;
-    private TextView statusView;
-    private TextView idView;
     private TextView tokenStatusView;
+    private ImageView tokenImageView;
 
     HashMap<Integer, String> status;
 
-    String fileFullPath;
+    /*String fileFullPath;
     String packageName = "com.example.tessa.kyc";
-    ApplicationInfo appInfo;
+    ApplicationInfo appInfo;*/
     private static final String filePath = "/files/token.json";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
-        userID = currentUser.getUid();
+        thisActivity = getActivity();
 
-        storage = FirebaseStorage.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        id = currentUser.getUid();
+        email = currentUser.getEmail();
+        FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        usersRef = mDatabase.child("users").child(userID);
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference usersRef = mDatabase.child("users").child(id);
         statusRef = usersRef.child("status");
-
-        Intent intent = getActivity().getIntent();
-        email = intent.getStringExtra("E-mail");
-        id = intent.getStringExtra("ID");
+        nameRef = usersRef.child("full_name");
 
         status = new HashMap<>();
         status.put(0, "Pending Verification");
@@ -102,28 +97,24 @@ public class MainLoggedInFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_mainloggedin, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        emailView = (TextView) view.findViewById(R.id.MainLog_Email_TextView);
-        statusView = (TextView) view.findViewById(R.id.MainLog_Status_TextView);
-        idView = (TextView) view.findViewById(R.id.MainLog_ID_TextView);
+        final TextView nameView = (TextView) view.findViewById(R.id.MainLog_Welcome);
+        TextView emailView = (TextView) view.findViewById(R.id.MainLog_Email_TextView);
+        TextView idView = (TextView) view.findViewById(R.id.MainLog_ID_TextView);
         tokenStatusView = (TextView) view.findViewById(R.id.MainLog_TokenStatus);
+        tokenImageView = (ImageView) view.findViewById(R.id.MainLog_Image);
 
-        emailView.setText(currentUser.getEmail().toString());
-        idView.setText(currentUser.getUid().toString());
-
-        if (mAuth.getCurrentUser().isEmailVerified())
-            statusView.setText("[VERIFIED]");
-        else
-            statusView.setText("[UNVERIFIED]");
+        emailView.setText(email);
+        idView.setText(id);
 
         statusRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -143,15 +134,37 @@ public class MainLoggedInFragment extends Fragment {
                         ex.printStackTrace();
                     }
                 }*/
-                 if ((long) dataSnapshot.getValue()==3) {
-                    Intent intent = new Intent (getActivity(), ProfileActivity.class);
-                    intent.putExtra("Origin", "Update");
-                    intent.putExtra("E-mail", email);
-                    intent.putExtra("ID", id);
-                    startActivity(intent);
-                    getActivity().finish();
+                if (dataSnapshot.exists()) {
+                    if ((long) dataSnapshot.getValue()==3 && getActivity()!=null) {
+                        Intent intent = new Intent (thisActivity, ProfileActivity.class);
+                        intent.putExtra("Origin", "Update");
+                        intent.putExtra("E-mail", email);
+                        intent.putExtra("ID", id);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+
+                    else if ((long) dataSnapshot.getValue()==2) {
+                        tokenImageView.setImageResource(R.drawable.verifiedicon);
+                    }
+
+                    else
+                        tokenImageView.setImageResource(R.drawable.pendingicon);
+                    tokenStatusView.setText(status.get(Integer.valueOf(dataSnapshot.getValue().toString())));
+                    tokenImageView.setVisibility(View.VISIBLE);
                 }
-                tokenStatusView.setText(status.get(Integer.valueOf(dataSnapshot.getValue().toString())));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        nameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String name = getString(R.string.welcome_login, dataSnapshot.getValue());
+                nameView.setText(name);
             }
 
             @Override
@@ -160,11 +173,10 @@ public class MainLoggedInFragment extends Fragment {
             }
         });
 
-
     }
 
     public void downloadFile() {
-        islandRef = storageRef.child("raw/banks.json");
+        StorageReference islandRef = storageRef.child("raw/banks.json");
 
         File rootPath = new File(Environment.getExternalStorageDirectory(), "blocktrace");
 
@@ -188,7 +200,7 @@ public class MainLoggedInFragment extends Fragment {
         });
     }
 
-    public void incomingToken() {
+ /*   public void incomingToken() {
         PackageManager packageManager = getActivity().getPackageManager();
         try {
             appInfo = 	packageManager.getApplicationInfo(packageName,PackageManager.GET_META_DATA);
@@ -203,7 +215,6 @@ public class MainLoggedInFragment extends Fragment {
     }
 
     public JSONObject getToken(String directory){
-        String line;
         String output = "";
         JSONObject jsonObject;
         try{
@@ -247,8 +258,5 @@ public class MainLoggedInFragment extends Fragment {
             e.printStackTrace();
         }
         return "Not Saved";
-    }
-
-
-
+    }*/
 }

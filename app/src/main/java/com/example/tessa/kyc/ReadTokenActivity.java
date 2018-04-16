@@ -70,7 +70,6 @@ public class ReadTokenActivity extends BaseActivity {
         }
 
     }
-
    /* public void onClick(View view) {
         if (origin.equalsIgnoreCase("Company Login")) {
             //if token gives correct keys
@@ -94,7 +93,6 @@ public class ReadTokenActivity extends BaseActivity {
             //else not successful
         }
     }*/
-
     //for register organization
     class RegisterOrgTask extends AsyncTask<String,Void,String> {
         JSONObject token;
@@ -136,16 +134,22 @@ public class ReadTokenActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();
-            mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
-            Log.i("NORMAN","result:"+result);
+
+            if (!result.contains("False:")) {
+                Toast.makeText(getApplicationContext(),
+                        companyName + " Registration Successful",
+                        Toast.LENGTH_SHORT).show();
+                mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
+            }
+            else{
+                Toast.makeText(getApplicationContext(),
+                        result.substring(5),
+                        Toast.LENGTH_SHORT).show();
+            }
 
             Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
             intent.putExtra("KEY", token.toString());
             startActivity(intent);
-            Toast.makeText(getApplicationContext(),
-                    companyName+" Registration Successful",
-                    Toast.LENGTH_SHORT).show();
             finish();
 
             /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
@@ -177,6 +181,7 @@ public class ReadTokenActivity extends BaseActivity {
     //for login organization
     class LoginOrgTask extends AsyncTask<String,Void,String> {
         JSONObject token;
+        String result;
         @Override
         protected String doInBackground(String... params) {
             String tokenStr = params[0];
@@ -215,7 +220,7 @@ public class ReadTokenActivity extends BaseActivity {
                 JSONObject encrypted_info = encrypt_json(loginObject,publicKeyByte);
 
                 //receive the response from company backend to indicate the status of login
-                String result = Http_Post("https://shielded-bayou-99151.herokuapp.com/login_org", encrypted_info);
+                result = Http_Post("https://shielded-bayou-99151.herokuapp.com/login_org", encrypted_info);
 
                 return result;
 
@@ -227,9 +232,10 @@ public class ReadTokenActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             /*Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();*/
-            Toast.makeText(getApplicationContext(),
-                    companyName+" Registration Successful",
-                    Toast.LENGTH_SHORT).show();
+            if (!result.contains("False:")) {
+                Toast.makeText(getApplicationContext(),
+                        companyName + " Login Successful",
+                        Toast.LENGTH_SHORT).show();
  /*               AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
                 alertDialog.setTitle("Update Token");
                 alertDialog.setMessage("Please update your token");
@@ -249,6 +255,12 @@ public class ReadTokenActivity extends BaseActivity {
                             }
                         });
                 alertDialog.show();*/
+            }
+            else{
+                Toast.makeText(getApplicationContext(),
+                        result.substring(5),
+                        Toast.LENGTH_SHORT).show();
+            }
             startActivity(new Intent(ReadTokenActivity.this, MainLoggedInActivity.class));
             finish();
         }
@@ -259,7 +271,8 @@ public class ReadTokenActivity extends BaseActivity {
        This method is to detect the NFC Tag and perform reading token function
    */
     @Override
-    protected void onNewIntent(Intent intent){
+    protected void onNewIntent(Intent intent) {
+        content.setText("Please Do Not Remove Your blocktrace Token From Your Device");
         super.onNewIntent(intent);
         String tokenStr;
         if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
@@ -335,7 +348,7 @@ public class ReadTokenActivity extends BaseActivity {
         if (ndefRecords != null && ndefRecords.length>0){
             NdefRecord ndefRecord = ndefRecords[0];
             tagContent = getTextFromNdefRecord(ndefRecord);
-            content.setText(tagContent);
+            //content.setText(tagContent);
         }
         else{
             Toast.makeText(this,"No NDEF records found!",Toast.LENGTH_LONG).show();

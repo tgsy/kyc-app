@@ -75,10 +75,10 @@ public class ReportFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 ID = input.getText().toString();
                                 new reportTokenLost().execute();
-                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                /*Intent intent = new Intent(getActivity(), LoginActivity.class);
                                 startActivity(intent);
 
-                                getActivity().finish();
+                                getActivity().finish();*/
                             }
                         });
                 alertDialog.setNegativeButton("CANCEL",
@@ -113,7 +113,7 @@ public class ReportFragment extends Fragment {
                 JSONObject message = new JSONObject(Http_Post("https://kyc-project.herokuapp.com/token_lost", encrypted_info));
 
                 return message.toString();
-            }catch (Exception ex){
+            } catch (Exception ex){
                 return "Exception " + ex.getMessage();
             }
         }
@@ -123,16 +123,9 @@ public class ReportFragment extends Fragment {
             Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
             Toast.makeText(getContext(), "Submission Successful", Toast.LENGTH_SHORT).show();
 
-            mAuth.getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Log.d("TAG", "User account deleted.");
-                        Toast.makeText(getActivity(),"User account deleted.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            mUserRef.getDatabase().getReference().child("users").child(userID).removeValue();
+            //mUserRef.getDatabase().getReference().child("users").child(userID).setValue(null);
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+            getActivity().finish();
         }
     }
 

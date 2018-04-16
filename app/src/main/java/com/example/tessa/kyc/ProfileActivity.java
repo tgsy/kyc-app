@@ -29,8 +29,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,23 +45,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileActivity extends BaseActivity implements
         View.OnClickListener {
     private static final int COMPANY_COUNT = 1004;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
     private DatabaseReference usersRef;
     private String userID;
     private Uri downloadUri;
-    private Uri filePath;
+    //private Uri filePath;
 
-    private TextView headerView;
+    private TextView infoView;
     private TextView emailView;
-    private TextView statusView;
-    private TextView idView;
     private EditText nameView;
     private EditText postalCodeView;
     private EditText identifNoView;
@@ -67,7 +70,6 @@ public class ProfileActivity extends BaseActivity implements
     private EditText yyyyView;
     private ImageView mImageView;
     private TextView pleaseUpload;
-    private ImageButton takePhotoButton;
     private StorageReference storageRef;
     private Bitmap imageBitmap;
 
@@ -87,13 +89,14 @@ public class ProfileActivity extends BaseActivity implements
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference statusRef = mDatabase.child("users").child("status");
         usersRef = mDatabase.child("users").child(userID);
 
-        headerView = (TextView) findViewById(R.id.Profile_Header);
+        infoView = (TextView) findViewById(R.id.Profile_Info_TextView);
         emailView = (TextView) findViewById(R.id.Profile_Email_TextView);
-        idView = (TextView) findViewById(R.id.Profile_ID_TextView);
-        nameView = (EditText) findViewById(R.id.Profile_FirstName_EditText);
+        TextView idView = (TextView) findViewById(R.id.Profile_ID_TextView);
+        nameView = (EditText) findViewById(R.id.Profile_FullName_EditText);
         postalCodeView = (EditText) findViewById(R.id.Profile_PostalCode_EditText);
         identifNoView = (EditText) findViewById(R.id.Profile_IdentifNo_EditText);
         ddView = (EditText) findViewById(R.id.Profile_DoB_Day_EditText);
@@ -101,7 +104,6 @@ public class ProfileActivity extends BaseActivity implements
         yyyyView = (EditText) findViewById(R.id.Profile_DoB_Year_EditText);
         mImageView = (ImageView) findViewById(R.id.Profile_ImageView);
         pleaseUpload = (TextView) findViewById(R.id.Profile_pleaseUpload_TextView);
-        takePhotoButton = (ImageButton) findViewById(R.id.Profile_TakePhoto_button);
 
         Intent intent = getIntent();
         emailView.setText(intent.getStringExtra("E-mail"));
@@ -109,6 +111,21 @@ public class ProfileActivity extends BaseActivity implements
 
         // Create a storage reference from our app
         storageRef = FirebaseStorage.getInstance().getReference();
+
+        statusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if ((long) dataSnapshot.getValue() == 3)
+                        infoView.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -126,10 +143,13 @@ public class ProfileActivity extends BaseActivity implements
                 String dob = ddView.getText().toString() + "/" +
                         mmView.getText().toString() + "/" +
                         yyyyView.getText().toString();
+                Log.i("TAG", "about to write");
                 writeNewUser(fn, pc, id, dob);
+                Log.i("TAG", "wrote");
                 uploadImagetoFirebase();
+                Log.i("TAG", "uploadedimagetofirebase");
                 Toast.makeText(ProfileActivity.this,
-                        "Registration Successful", Toast.LENGTH_SHORT).show();
+                        "Submission Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, MainLoggedInActivity.class);
                 startActivity(intent);
                 finish();
@@ -204,6 +224,7 @@ public class ProfileActivity extends BaseActivity implements
     }
 
     private void uploadImagetoFirebase() {
+        Log.i("TAG", "uploadimagetofirebase");
 
         file = Uri.fromFile(new File(mCurrentPhotoPath));
 
@@ -242,14 +263,26 @@ public class ProfileActivity extends BaseActivity implements
 
     private boolean validateForm() {
         boolean valid = true;
+        /*String fullName = nameView.getText().toString();
+        String id = identifNoView.getText().toString();
+        String postalcode= postalCodeView.getText().toString();
+        String dob_dd = ddView.getText().toString();
+        String dob_mm = mmView.getText().toString();
+        String dob_yyyy = yyyyView.getText().toString();*/
+        ArrayList<EditText> fields = new ArrayList<>();
+        fields.add(nameView);
+        fields.add(identifNoView);
+        fields.add(postalCodeView);
+        fields.add(ddView);
+        fields.add(mmView);
+        fields.add(yyyyView);
 
-        TextView mfirstName = (TextView) findViewById(R.id.Profile_FirstName_EditText);
-        String firstName = mfirstName.getText().toString();
-        if (TextUtils.isEmpty(firstName)) {
-            mfirstName.setError("Required.");
-            valid = false;
-        } else {
-            mfirstName.setError(null);
+        for (EditText e : fields) {
+            if (TextUtils.isEmpty(e.getText().toString())) {
+                e.setError("Required.");
+                valid = false;
+            } else
+                e.setError(null);
         }
 
         return valid;
@@ -258,7 +291,7 @@ public class ProfileActivity extends BaseActivity implements
     private void writeNewUser(String fullName, String postalCode, String identifNo, String dob) {
         User nUser = new User(fullName, postalCode, identifNo, dob);
         usersRef.setValue(nUser);
-
+        Log.i("TAG", "writinguser");
         int count = 1000;
         while (count<=COMPANY_COUNT) {
             usersRef.child("company").child(String.valueOf(count)).setValue(false);

@@ -26,14 +26,25 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/Profile_Info_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_info"
+            android:visibility="gone"
+            android:paddingBottom="16dp"
+            android:textColor="@color/colorAccent"
+            android:layout_below="@id/Profile_Header"/>
+
+        <TextView
             android:id="@+id/Profile_EmailTitle_TextView"
-            android:layout_below="@+id/Profile_Header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/Profile_Info_TextView"
             android:layout_gravity="center"
+            android:fontFamily="@font/input_regular"
             android:text="@string/email"
-            android:textStyle="bold"
             android:textColor="@color/black" />
+
 
         <TextView
             android:id="@+id/Profile_Email_TextView"
@@ -41,14 +52,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:paddingBottom="10dp"
             android:text="@string/placeholder_text"
             android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/Profile_IDTitle_TextView"
+            android:layout_below="@+id/Profile_Email_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/uid"
+            android:fontFamily="@font/input_regular"
+            android:textColor="@color/black" />
+
 
         <TextView
             android:id="@+id/Profile_ID_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/Profile_Email_TextView"
+            android:layout_below="@+id/Profile_IDTitle_TextView"
             android:layout_gravity="center"
             android:paddingBottom="10dp"
             android:text="@string/placeholder_text"
@@ -60,8 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/Profile_ID_TextView"
             android:text="@string/full_name"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:fontFamily="@font/input_regular"
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/Profile_FullName_EditText"
@@ -83,8 +106,8 @@
             android:layout_below="@+id/Profile_FullName_EditText"
             android:layout_gravity="start"
             android:text="@string/postal_code"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:fontFamily="@font/input_regular"
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/Profile_PostalCode_EditText"
@@ -104,8 +127,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/Profile_PostalCode_EditText"
             android:text="@string/dob"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:fontFamily="@font/input_regular"
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/Profile_DoB_Day_EditText"
@@ -154,14 +177,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/Profile_DoB_Year_EditText"
             android:text="@string/id_no"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:fontFamily="@font/input_regular"
+            android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/Profile_IdentifNo_EditText"
             android:layout_below="@+id/Profile_IdentifNo_TextView"
             android:layout_width="200dp"
             android:maxLines="1"
+            android:maxLength="9"
             android:paddingBottom="10dp"
             android:layout_height="match_parent" />
 
@@ -171,8 +195,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/Profile_IdentifNo_EditText"
             android:text="@string/image_verdoc"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:fontFamily="@font/input_regular"
+            android:textColor="@color/black" />
 
         <ImageButton
             android:id="@+id/Profile_TakePhoto_button"

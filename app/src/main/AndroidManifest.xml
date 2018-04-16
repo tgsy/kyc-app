@@ -53,6 +53,7 @@
         <activity
             android:name=".SignUpActivity"
             android:label="@string/title_activity_sign_up"
+            android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainLoggedInActivity"
@@ -63,9 +64,11 @@
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CompanySignUpActivity" />
+        <activity android:name=".CompanySignUpActivity"
+            android:parentActivityName=".MainLoggedInActivity"/>
         <activity android:name=".ReadTokenActivity"/>
-        <activity android:name=".CompanyLoginActivity"/>
+        <activity android:name=".CompanyLoginActivity"
+            android:parentActivityName=".MainLoggedInActivity"/>
         <activity android:name=".WriteTokenActivity"/>
     </application>
 

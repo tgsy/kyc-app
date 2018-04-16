@@ -28,10 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CompanySignUpActivity extends BaseActivity {
-
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
-
     private int companyID;
     private EditText companyIDEditText;
     private EditText usernameEditText;
@@ -50,11 +46,8 @@ public class CompanySignUpActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_signup);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
         companyIDEditText = (EditText) findViewById(R.id.company_id);
-        usernameEditText = (EditText) findViewById(R.id.Company_email);
+        usernameEditText = (EditText) findViewById(R.id.Company_username);
         passwordEditText = (EditText)findViewById(R.id.Company_password);
         companyLogo = (ImageView) findViewById(R.id.company_logo);
         mImageRef = FirebaseStorage.getInstance().getReference().child("companylogos");
@@ -136,7 +129,21 @@ public class CompanySignUpActivity extends BaseActivity {
         } else {
             companyIDEditText.setError(null);
         }
+
+        if (usernameEditText.getVisibility()==View.VISIBLE &&
+                passwordEditText.getVisibility()==View.VISIBLE) {
+            if (TextUtils.isEmpty(usernameEditText.getText().toString())) {
+                usernameEditText.setError("Required.");
+                valid = false;
+            } else if (TextUtils.isEmpty(passwordEditText.getText().toString())) {
+                passwordEditText.setError("Required.");
+                valid = false;
+            }
+            else {
+                usernameEditText.setError(null);
+               passwordEditText.setError(null);
+            }
+        }
         return valid;
     }
-
 }

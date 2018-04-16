@@ -10,13 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/writeToken_nfc"
+        android:fontFamily="@font/input_bold"
+        android:padding="15dp"
         android:text="@string/scan_nfc_token_write"
         android:textAlignment="center"
         android:textColor="@color/colorAccent"
-        android:padding="15dp"
-        android:textAllCaps="true"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textSize="18sp" />
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/writeToken_nfc"

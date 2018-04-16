@@ -19,7 +19,7 @@
         android:layout_margin="16dp"
         android:fontFamily="@font/input_regular"
         android:textColor="@color/black"
-        android:text="Link New Company to blocktrace"
+        android:text="@string/link_company"
         android:textSize="20sp"/>
 
     <TextView
@@ -28,7 +28,7 @@
         android:textAlignment="center"
         android:layout_gravity="center"
         android:layout_margin="16dp"
-        android:text="Enter Company ID"
+        android:text="@string/companyID_prompt"
         android:textSize="20sp"/>
 
     <EditText
@@ -37,14 +37,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="Company ID"/>
+        android:hint="@string/companyID_hint"/>
 
     <Button
         android:id="@+id/company_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="Submit"
+        android:text="@string/submit"
         android:layout_margin="16dp"
         android:textAllCaps="true"
         android:onClick="onClick"
@@ -72,16 +72,17 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/Company_email"
+                android:id="@+id/Company_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_username"
+                android:nextFocusDown="@id/Company_password"
                 android:onClick="onClick"
                 android:inputType="textEmailAddress" />
 
             <EditText
                 android:id="@+id/Company_password"
-                android:layout_below="@+id/Company_email"
+                android:layout_below="@+id/Company_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_password"

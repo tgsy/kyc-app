@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -28,6 +29,8 @@ public class WriteTokenActivity extends BaseActivity {
     NfcAdapter nfcAdapter;
     String tokenStr;
 
+    TextView content;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,7 @@ public class WriteTokenActivity extends BaseActivity {
         Intent intent = getIntent();
         tokenStr = intent.getStringExtra("KEY");
         Log.i("Norman",tokenStr);
+        content = (TextView) findViewById(R.id.writeToken_content);
     }
 
     /*
@@ -44,6 +48,7 @@ public class WriteTokenActivity extends BaseActivity {
     */
     @Override
     protected void onNewIntent(Intent intent){
+        content.setText("Please Do Not Remove Your blocktrace Token From Your Device");
         super.onNewIntent(intent);
         String token = "";
 
