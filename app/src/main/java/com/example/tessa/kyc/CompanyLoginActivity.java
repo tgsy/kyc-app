@@ -87,4 +87,18 @@ public class CompanyLoginActivity extends BaseActivity {
 
         return valid;
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = getParentActivityIntent();
+        i.putExtra("fragmentToLoad", 1);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

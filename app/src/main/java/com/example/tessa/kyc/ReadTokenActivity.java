@@ -70,29 +70,7 @@ public class ReadTokenActivity extends BaseActivity {
         }
 
     }
-   /* public void onClick(View view) {
-        if (origin.equalsIgnoreCase("Company Login")) {
-            //if token gives correct keys
-            new LoginOrgTask().execute();
 
-            Intent intent = new Intent(this, WriteTokenActivity.class);
-            startActivity(intent);
-
-            Toast.makeText(this,
-                    "Login to "+companyName+" Successful",
-                    Toast.LENGTH_SHORT).show();
-            finish();
-            //else not successful
-        }
-
-        else if (origin.equals("Company Registration")) {
-            //if token gives correct keys
-            new RegisterOrgTask().execute();
-
-
-            //else not successful
-        }
-    }*/
     //for register organization
     class RegisterOrgTask extends AsyncTask<String,Void,String> {
         JSONObject token;
@@ -127,6 +105,7 @@ public class ReadTokenActivity extends BaseActivity {
                 return result;
 
             } catch (Exception ex) {
+                Log.i("ERROR", "registerorg:"+ex.getMessage());
                 Toast.makeText(ReadTokenActivity.this, "Oh no, something went wrong. Please scan your blocktrace again.", Toast.LENGTH_LONG).show();
                 return "Exception: " + ex.getMessage();
             }
@@ -135,23 +114,32 @@ public class ReadTokenActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
 
-            if (!result.contains("False:")) {
+            if (!result.contains("False:") && !result.contains("Exception:")) {
                 Toast.makeText(getApplicationContext(),
                         companyName + " Registration Successful",
                         Toast.LENGTH_SHORT).show();
                 mDatabase.child("users").child(userID).child("company").child(Integer.toString(companyID)).setValue(true);
+                Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
+                intent.putExtra("KEY", token.toString());
+                startActivity(intent);
+                finish();
             }
             else{
                 Toast.makeText(getApplicationContext(),
-                        result.substring(5),
+                        "Oh no, something went wrong. Please scan your blocktrace again. Error: "+
+                        result.substring(6),
                         Toast.LENGTH_SHORT).show();
+                //startActivity(new Intent(getApplicationContext(), MainLoggedInActivity.class));
+                /*if (origin.equalsIgnoreCase("Company Login")) {
+                    Intent intent = new Intent(getApplicationContext(), CompanyLoginActivity.class);
+                    startActivity(intent);
+                }
+
+                else if (origin.equalsIgnoreCase("Company Registration")) {
+                    Intent intent = new Intent(getApplicationContext(), CompanySignUpActivity.class);
+                    startActivity(intent);
+                }*/
             }
-
-            Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
-            intent.putExtra("KEY", token.toString());
-            startActivity(intent);
-            finish();
-
             /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
             alertDialog.setTitle("Update Token");
             alertDialog.setMessage("Please update your token");
@@ -225,6 +213,7 @@ public class ReadTokenActivity extends BaseActivity {
                 return result;
 
             } catch (Exception ex) {
+                Log.i("ERROR","loginorgtask: "+ex.getMessage());
                 return "Exception: "+ ex.getMessage();
             }
         }
@@ -256,15 +245,14 @@ public class ReadTokenActivity extends BaseActivity {
                         });
                 alertDialog.show();*/
             }
-            else{
+            else {
                 Toast.makeText(getApplicationContext(),
-                        result.substring(5),
+                        result.substring(6),
                         Toast.LENGTH_SHORT).show();
             }
             startActivity(new Intent(ReadTokenActivity.this, MainLoggedInActivity.class));
             finish();
         }
-
     }
 
    /*
@@ -276,7 +264,7 @@ public class ReadTokenActivity extends BaseActivity {
         super.onNewIntent(intent);
         String tokenStr;
         if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
-            Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
             Parcelable[] parcelables;
             parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             if (parcelables != null && parcelables.length>0){
@@ -289,7 +277,11 @@ public class ReadTokenActivity extends BaseActivity {
                     else if (origin.equalsIgnoreCase("Company Registration")){
                         new RegisterOrgTask().execute(tokenStr);
                     }
-                }catch (Exception ex){
+                } catch (Exception ex){
+                    Log.i("ERROR","onnewintent: "+ex.getMessage());
+                    Toast.makeText(getApplicationContext(),
+                            "Oh no, something went wrong. Please try again.",
+                            Toast.LENGTH_SHORT).show();
                     ex.printStackTrace();
                 }
             }
@@ -333,8 +325,10 @@ public class ReadTokenActivity extends BaseActivity {
             int languageSize = payload[0] & 0063;
             tagContent = new String(payload, languageSize + 1, payload.length - languageSize -1, textEncoding);
 
-        }catch (UnsupportedEncodingException ex){
-            Log.e("getTextFromNdefRecord",ex.getMessage(),ex);
+        } catch (UnsupportedEncodingException ex){
+            Log.i("ERROR","getTextFromNdefRecord "+ex.getMessage());
+            Toast.makeText(this,
+                    "Error: Unsupported Encoding", Toast.LENGTH_LONG).show();
         }
         return tagContent;
     }
@@ -351,7 +345,8 @@ public class ReadTokenActivity extends BaseActivity {
             //content.setText(tagContent);
         }
         else{
-            Toast.makeText(this,"No NDEF records found!",Toast.LENGTH_LONG).show();
+            //Toast.makeText(this,"No NDEF records found!",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Error: No NDEF records found",Toast.LENGTH_LONG).show();
         }
         return tagContent;
     }

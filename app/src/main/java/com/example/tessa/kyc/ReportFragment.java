@@ -90,7 +90,6 @@ public class ReportFragment extends Fragment {
                 alertDialog.show();
             }
         });
-
         return v;
     }
 
@@ -111,21 +110,26 @@ public class ReportFragment extends Fragment {
 
                 //receive the response from kyc backend
                 JSONObject message = new JSONObject(Http_Post("https://kyc-project.herokuapp.com/token_lost", encrypted_info));
-
                 return message.toString();
-            } catch (Exception ex){
+            } catch (Exception ex) {
+                Log.i("ERROR",ex.getMessage());
                 return "Exception " + ex.getMessage();
             }
         }
 
         @Override
-        protected void onPostExecute(String result){
-            Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
-            Toast.makeText(getContext(), "Submission Successful", Toast.LENGTH_SHORT).show();
+        protected void onPostExecute(String result) {
+            if (!result.contains("Exception:")) {
+                //Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Report Submission Successful", Toast.LENGTH_SHORT).show();
+                //mUserRef.getDatabase().getReference().child("users").child(userID).setValue(null);
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+            }
+            else
+                Toast.makeText(getContext(), "Report Submission Was Unsuccessful, Please try again later.", Toast.LENGTH_SHORT).show();
 
-            //mUserRef.getDatabase().getReference().child("users").child(userID).setValue(null);
-            startActivity(new Intent(getActivity(), LoginActivity.class));
-            getActivity().finish();
+
         }
     }
 

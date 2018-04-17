@@ -67,7 +67,18 @@ public class MainLoggedInActivity
             }
         });
 
-        fragmentClass = MainLoggedInFragment.class;
+        int intentFragment = getIntent().getExtras().getInt("fragmentToLoad", 0);
+
+        switch (intentFragment) {
+            case 0:
+                fragmentClass = MainLoggedInFragment.class;
+                break;
+            case 1:
+                fragmentClass = CompanyFragment.class;
+                break;
+            default:
+                fragmentClass = MainLoggedInFragment.class;
+        }
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();

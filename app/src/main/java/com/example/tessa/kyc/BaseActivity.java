@@ -99,7 +99,24 @@ public class BaseActivity extends AppCompatActivity {
                 return message.toString();
             }
             else {
-                return "False: " + responseCode;
+                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getErrorStream()));
+                StringBuilder message = new StringBuilder("");
+                String line = "";
+
+                while ((line = in.readLine())!= null){
+                    message.append(line);
+                }
+                in.close();
+                //disconnect with the url after done
+                urlConnection.disconnect();
+                try {
+                    JSONObject errorMessage = new JSONObject(message.toString());
+                    String messageError = errorMessage.get("Error").toString();
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
+                return "False: " + message;
             }
 
         } catch (IOException ex) {

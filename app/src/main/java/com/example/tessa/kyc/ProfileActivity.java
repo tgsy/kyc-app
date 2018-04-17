@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -285,6 +286,17 @@ public class ProfileActivity extends BaseActivity implements
                 e.setError(null);
         }
 
+        if (Integer.valueOf(ddView.getText().toString())>31 ||
+                Integer.valueOf(ddView.getText().toString())<1 ||
+                Integer.valueOf(mmView.getText().toString())>12 ||
+                Integer.valueOf(mmView.getText().toString())<1 ||
+                Integer.valueOf(yyyyView.getText().toString())>Calendar.getInstance().get(Calendar.YEAR) ||
+                Integer.valueOf(yyyyView.getText().toString())<(Calendar.getInstance().get(Calendar.YEAR)-150)) {
+            ddView.setError("Invalid date parameter");
+            mmView.setError("Invalid date parameter");
+            yyyyView.setError("Invalid date parameter");
+            valid = false;
+        }
         return valid;
     }
 

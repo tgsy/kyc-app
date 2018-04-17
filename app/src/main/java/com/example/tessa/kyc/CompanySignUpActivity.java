@@ -82,7 +82,7 @@ public class CompanySignUpActivity extends BaseActivity {
     }
 
     public void checkforCompany(EditText companyid) {
-        if (validateForm()) {
+        if (validateCompanyField()) {
             //do not allow integer
             companyID = Integer.valueOf(companyid.getText().toString());
             if (validCompanies.containsKey(companyID)) {
@@ -123,13 +123,6 @@ public class CompanySignUpActivity extends BaseActivity {
     private boolean validateForm() {
         boolean valid = true;
 
-        if (TextUtils.isEmpty(companyIDEditText.getText().toString())) {
-            companyIDEditText.setError("Required.");
-            valid = false;
-        } else {
-            companyIDEditText.setError(null);
-        }
-
         if (usernameEditText.getVisibility()==View.VISIBLE &&
                 passwordEditText.getVisibility()==View.VISIBLE) {
             if (TextUtils.isEmpty(usernameEditText.getText().toString())) {
@@ -146,4 +139,31 @@ public class CompanySignUpActivity extends BaseActivity {
         }
         return valid;
     }
+
+    private boolean validateCompanyField(){
+        boolean valid = true;
+        if (TextUtils.isEmpty(companyIDEditText.getText().toString())) {
+            companyIDEditText.setError("Required.");
+            valid = false;
+        } else {
+            companyIDEditText.setError(null);
+        }
+        return valid;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = getParentActivityIntent();
+        i.putExtra("fragmentToLoad", 1);
+        startActivity(i);
+
+        finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
 }
