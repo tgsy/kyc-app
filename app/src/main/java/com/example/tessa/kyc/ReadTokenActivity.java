@@ -1,8 +1,6 @@
 package com.example.tessa.kyc;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
@@ -11,11 +9,7 @@ import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.RequiresPermission;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,11 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.security.PublicKey;
 import java.util.Arrays;
 
 public class ReadTokenActivity extends BaseActivity {
@@ -123,47 +115,12 @@ public class ReadTokenActivity extends BaseActivity {
                 intent.putExtra("KEY", token.toString());
                 startActivity(intent);
                 finish();
-            }
-            else{
+            } else
                 Toast.makeText(getApplicationContext(),
-                        "Oh no, something went wrong. Please scan your blocktrace again. Error: "+
-                        result.substring(6),
-                        Toast.LENGTH_SHORT).show();
-                //startActivity(new Intent(getApplicationContext(), MainLoggedInActivity.class));
-                /*if (origin.equalsIgnoreCase("Company Login")) {
-                    Intent intent = new Intent(getApplicationContext(), CompanyLoginActivity.class);
-                    startActivity(intent);
-                }
-
-                else if (origin.equalsIgnoreCase("Company Registration")) {
-                    Intent intent = new Intent(getApplicationContext(), CompanySignUpActivity.class);
-                    startActivity(intent);
-                }*/
-            }
-            /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
-            alertDialog.setTitle("Update Token");
-            alertDialog.setMessage("Please update your token");
-            final EditText input = new EditText(ReadTokenActivity.this);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            input.setLayoutParams(lp);
-            alertDialog.setView(input);
-            alertDialog.setIcon(R.drawable.ic_verified_user_black_24dp);
-            alertDialog.setPositiveButton("OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(getApplicationContext(), WriteTokenActivity.class);
-                            intent.putExtra("KEY", token.toString());
-                            startActivity(intent);
-                            Toast.makeText(getApplicationContext(),
-                                    companyName+" Registration Successful",
-                                    Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                    });
-            alertDialog.show();*/
+                        "Oh no, something went wrong. Please scan your blocktrace again. Error: " +
+                                result.substring(6), Toast.LENGTH_SHORT).show();
         }
+
     }
 
     //for login organization
@@ -220,40 +177,22 @@ public class ReadTokenActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            /*Toast.makeText(ReadTokenActivity.this, result, Toast.LENGTH_LONG).show();*/
             if (!result.contains("False:")) {
                 Toast.makeText(getApplicationContext(),
                         companyName + " Login Successful",
                         Toast.LENGTH_SHORT).show();
- /*               AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReadTokenActivity.this);
-                alertDialog.setTitle("Update Token");
-                alertDialog.setMessage("Please update your token");
-                final EditText input = new EditText(ReadTokenActivity.this);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(lp);
-                alertDialog.setView(input);
-                alertDialog.setIcon(R.drawable.ic_verified_user_black_24dp);
-                alertDialog.setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent (getParent(), WriteTokenActivity.class);
-                                intent.putExtra("KEY", token.toString());
-                                startActivity(intent);
-                            }
-                        });
-                alertDialog.show();*/
             }
-            else {
+
+            else
                 Toast.makeText(getApplicationContext(),
                         result.substring(6),
                         Toast.LENGTH_SHORT).show();
-            }
+
             startActivity(new Intent(ReadTokenActivity.this, MainLoggedInActivity.class));
             finish();
         }
     }
+
 
    /*
        This method is to detect the NFC Tag and perform reading token function
@@ -270,13 +209,12 @@ public class ReadTokenActivity extends BaseActivity {
             if (parcelables != null && parcelables.length>0){
                 tokenStr = readTextFromMessage((NdefMessage)parcelables[0]);
                 try {
-                    if (origin.equalsIgnoreCase("Company Login")){
+                    if (origin.equalsIgnoreCase("Company Login"))
                         new LoginOrgTask().execute(tokenStr);
-                    }
 
-                    else if (origin.equalsIgnoreCase("Company Registration")){
+                    else if (origin.equalsIgnoreCase("Company Registration"))
                         new RegisterOrgTask().execute(tokenStr);
-                    }
+
                 } catch (Exception ex){
                     Log.i("ERROR","onnewintent: "+ex.getMessage());
                     Toast.makeText(getApplicationContext(),
@@ -350,6 +288,4 @@ public class ReadTokenActivity extends BaseActivity {
         }
         return tagContent;
     }
-
-
 }

@@ -3,17 +3,15 @@ package com.example.tessa.kyc;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -25,16 +23,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONObject;
-
 public class MainLoggedInActivity
         extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
-    private String userID;
-    private DatabaseReference statusRef;
     private long status;
 
     Fragment fragment;
@@ -46,9 +39,9 @@ public class MainLoggedInActivity
         setContentView(R.layout.activity_main_logged_in);
 
         mAuth = FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
-        userID = currentUser.getUid();
-        statusRef = FirebaseDatabase.getInstance().getReference()
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        String userID = currentUser.getUid();
+        DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference()
                 .child("users")
                 .child(userID)
                 .child("status");
@@ -57,7 +50,6 @@ public class MainLoggedInActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())
-                //Log.i("DED", "status="+dataSnapshot.getValue().toString());
                     status = (long) dataSnapshot.getValue();
             }
 
@@ -86,9 +78,7 @@ public class MainLoggedInActivity
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -159,7 +149,7 @@ public class MainLoggedInActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_logout) {
-            signOut();
+            mAuth.signOut();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -202,10 +192,4 @@ public class MainLoggedInActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    private void signOut() {
-        mAuth.signOut();
-    }
-
-
 }

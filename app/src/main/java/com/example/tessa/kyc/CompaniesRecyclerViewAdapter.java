@@ -49,33 +49,18 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
 
     private static final File FILE = new File("/storage/emulated/0/blocktrace/banks.json");
 
-   /* private static Query query = FirebaseDatabase.getInstance()
-            .getReference()
-                .child("company")
-                .limitToLast(50);
-
-    private static FirebaseRecyclerOptions<Company> options = new FirebaseRecyclerOptions.Builder<Company>()
-            .setQuery(query, Company.class)
-                .build();*/
-
     public CompaniesRecyclerViewAdapter(Context context) {
         /*super(options);*/
 
         this.context = context;
-
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
         mCompanies = new ArrayList<>();
         appliedfor = new HashMap<>();
 
-        //String jsonString = parseJson(R.raw.banks);
         String jsonString = parseJson(FILE);
-        Log.i("DED","jsonstring: "+ jsonString);
 
         list = Arrays.asList(new Gson().fromJson(jsonString, Company[].class));
-
-        Log.i("DED", list.size()+"size");
         for (Company c: list) {
             getDataFromFirebase(c);
             if (appliedfor.isEmpty());
@@ -83,7 +68,6 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
                 mCompanies.add(c);
                 notifyDataSetChanged();
             }
-            Log.i("DED","size in recyclerview="+ mCompanies.size());
         }
 
     }
@@ -98,8 +82,6 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mCompanies.get(position);
-       /* int resID = CompaniesRecyclerViewAdapter.context.getResources().getIdentifier(mCompanies.get(position).image, "drawable", context.getPackageName());
-        holder.mImageView.setImageResource(resID);*/
         Glide.with(context /* context */)
                 .load(mImageRef.child(mCompanies.get(position).getImage()))
                 .into(holder.mImageView);
@@ -179,9 +161,7 @@ public class CompaniesRecyclerViewAdapter extends RecyclerView.Adapter<Companies
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return output;

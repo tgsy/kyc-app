@@ -1,9 +1,6 @@
 package com.example.tessa.kyc;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,20 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,18 +29,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileActivity extends BaseActivity implements
         View.OnClickListener {
@@ -59,8 +44,6 @@ public class ProfileActivity extends BaseActivity implements
     private DatabaseReference usersRef;
     private String userID;
     private Uri downloadUri;
-    //private Uri filePath;
-
     private TextView infoView;
     private TextView emailView;
     private EditText nameView;
@@ -72,13 +55,10 @@ public class ProfileActivity extends BaseActivity implements
     private ImageView mImageView;
     private TextView pleaseUpload;
     private StorageReference storageRef;
-    private Bitmap imageBitmap;
 
-    private String imageUrl;
-    private String imageKey;
-
-
-    final String TAG = "DED";
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    String mCurrentPhotoPath;
+    Uri file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +72,7 @@ public class ProfileActivity extends BaseActivity implements
         userID = mAuth.getCurrentUser().getUid();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         DatabaseReference statusRef = mDatabase.child("users").child("status");
+        storageRef = FirebaseStorage.getInstance().getReference();
         usersRef = mDatabase.child("users").child(userID);
 
         infoView = (TextView) findViewById(R.id.Profile_Info_TextView);
@@ -109,9 +90,6 @@ public class ProfileActivity extends BaseActivity implements
         Intent intent = getIntent();
         emailView.setText(intent.getStringExtra("E-mail"));
         idView.setText(intent.getStringExtra("ID"));
-
-        // Create a storage reference from our app
-        storageRef = FirebaseStorage.getInstance().getReference();
 
         statusRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -144,26 +122,18 @@ public class ProfileActivity extends BaseActivity implements
                 String dob = ddView.getText().toString() + "/" +
                         mmView.getText().toString() + "/" +
                         yyyyView.getText().toString();
-                Log.i("TAG", "about to write");
                 writeNewUser(fn, pc, id, dob);
-                Log.i("TAG", "wrote");
                 uploadImagetoFirebase();
-                Log.i("TAG", "uploadedimagetofirebase");
                 Toast.makeText(ProfileActivity.this,
                         "Submission Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, MainLoggedInActivity.class);
                 startActivity(intent);
                 finish();
-            } else {
-                validateForm();
-            }
+            } else validateForm();
         }
     }
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
     private void dispatchTakePictureIntent() {
-        Log.i("WHAT", "dispatchtakepic()");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -171,33 +141,25 @@ public class ProfileActivity extends BaseActivity implements
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-                Log.i("WHAT", "created image file");
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                Log.i("WHAT", "io exception");
                 ex.printStackTrace();
 
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Log.i("WHAT", "continues");
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.android.fileprovider",
                         photoFile);
-                Log.i("WHAT", "got Uri: "+photoURI);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                Log.i("WHAT", "took pictureintent: ");
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                Log.i("WHAT", "startedactivityforresult ");
             }
         }
     }
 
-    String mCurrentPhotoPath;
-    Uri file;
+
 
     private File createImageFile() throws IOException {
-        Log.i("WHAT", "createimagefile()");
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -210,13 +172,11 @@ public class ProfileActivity extends BaseActivity implements
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.i("WHAT", "currentphotopath="+mCurrentPhotoPath);
         return image;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("WHAT", "onactivityresult()");
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             mImageView.setImageURI(Uri.fromFile(new File(mCurrentPhotoPath)));
             mImageView.setVisibility(View.VISIBLE);
@@ -225,8 +185,6 @@ public class ProfileActivity extends BaseActivity implements
     }
 
     private void uploadImagetoFirebase() {
-        Log.i("TAG", "uploadimagetofirebase");
-
         file = Uri.fromFile(new File(mCurrentPhotoPath));
 
         StorageReference identifImage = storageRef.child("images/" + userID + ".jpg");
@@ -264,12 +222,6 @@ public class ProfileActivity extends BaseActivity implements
 
     private boolean validateForm() {
         boolean valid = true;
-        /*String fullName = nameView.getText().toString();
-        String id = identifNoView.getText().toString();
-        String postalcode= postalCodeView.getText().toString();
-        String dob_dd = ddView.getText().toString();
-        String dob_mm = mmView.getText().toString();
-        String dob_yyyy = yyyyView.getText().toString();*/
         ArrayList<EditText> fields = new ArrayList<>();
         fields.add(nameView);
         fields.add(identifNoView);
@@ -303,7 +255,6 @@ public class ProfileActivity extends BaseActivity implements
     private void writeNewUser(String fullName, String postalCode, String identifNo, String dob) {
         User nUser = new User(fullName, postalCode, identifNo.toUpperCase(), dob);
         usersRef.setValue(nUser);
-        Log.i("TAG", "writinguser");
         int count = 1000;
         while (count<=COMPANY_COUNT) {
             usersRef.child("company").child(String.valueOf(count)).setValue(false);
@@ -311,7 +262,6 @@ public class ProfileActivity extends BaseActivity implements
         }
         usersRef.child("status").setValue(0);
         usersRef.child("uid").setValue(mAuth.getCurrentUser().getUid());
-        usersRef.child("token_access").setValue(0);
         usersRef.child("email").setValue(emailView.getText());
     }
 

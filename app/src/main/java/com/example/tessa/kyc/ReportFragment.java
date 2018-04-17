@@ -1,14 +1,11 @@
 package com.example.tessa.kyc;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -20,8 +17,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -42,20 +37,11 @@ import static com.example.tessa.kyc.BlocktraceCrypto.rsaEncrypt;
 
 public class ReportFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mUserRef;
-    private String userID;
-    private String ID;
-
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_report, container, false);
-
-        mAuth = FirebaseAuth.getInstance();
-        userID = mAuth.getCurrentUser().getUid();
-        mUserRef = FirebaseDatabase.getInstance().getReference();
         Button reportLoss = (Button) v.findViewById(R.id.report_loss_button);
         reportLoss.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,9 +112,9 @@ public class ReportFragment extends Fragment {
                     message = new JSONObject(resp.substring(10));
                     return "Exception: "+message.toString();
                 }
-                else{
+                else
                     message = new JSONObject(resp);
-                }
+
                 return message.toString();
             } catch (Exception ex) {
                 Log.i("ERROR",ex.getMessage());
@@ -141,10 +127,7 @@ public class ReportFragment extends Fragment {
             Log.i("input", result);
             if (!result.contains("Exception") &&
                     !result.contains("False: ")) {
-                //Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
                 Toast.makeText(getContext(), "Report Submission Successful", Toast.LENGTH_SHORT).show();
-                //mUserRef.getDatabase().getReference().child("users").child(userID).setValue(null);
-                //mUserRef.getDatabase().getReference().child("users").child(userID).child("status").setValue(1);
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();
             }

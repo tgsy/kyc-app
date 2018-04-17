@@ -5,11 +5,6 @@ package com.example.tessa.kyc;
  */
 
 import android.app.ProgressDialog;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -44,7 +39,6 @@ public class BaseActivity extends AppCompatActivity {
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
-
         mProgressDialog.show();
     }
 
@@ -249,8 +243,4 @@ public class BaseActivity extends AppCompatActivity {
         jsonObject.put("Error","Failed to get token");
         return jsonObject;
     }
-
-
-
-
 }

@@ -64,11 +64,6 @@ public class MainLoggedInFragment extends Fragment {
 
     HashMap<Integer, String> status;
 
-    /*String fileFullPath;
-    String packageName = "com.example.tessa.kyc";
-    ApplicationInfo appInfo;*/
-    private static final String filePath = "/files/token.json";
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,20 +115,6 @@ public class MainLoggedInFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.i("DATASNAPSHOT", "getvalue: "+dataSnapshot.getValue());
-                /*if ((long) dataSnapshot.getValue()==2) {
-                    PackageManager packageManager = getActivity().getPackageManager();
-                    try {
-                        appInfo = packageManager.getApplicationInfo(packageName,PackageManager.GET_META_DATA);
-                        fileFullPath = appInfo.dataDir + filePath;
-                        Log.i("FILE",fileFullPath);
-                        JSONObject token = getToken(fileFullPath);
-                        Log.i("FILE","token is "+token.toString());
-                        String message = saveToken(token);
-                        Log.i("FILE", "message is "+message);
-                    } catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-                }*/
                 if (dataSnapshot.exists()) {
                     if ((long) dataSnapshot.getValue()==3 && getActivity()!=null) {
                         Intent intent = new Intent (thisActivity, ProfileActivity.class);
@@ -144,12 +125,11 @@ public class MainLoggedInFragment extends Fragment {
                         getActivity().finish();
                     }
 
-                    else if ((long) dataSnapshot.getValue()==2) {
+                    else if ((long) dataSnapshot.getValue()==2)
                         tokenImageView.setImageResource(R.drawable.verifiedicon);
-                    }
-
                     else
                         tokenImageView.setImageResource(R.drawable.pendingicon);
+
                     tokenStatusView.setText(status.get(Integer.valueOf(dataSnapshot.getValue().toString())));
                     tokenImageView.setVisibility(View.VISIBLE);
                 }
@@ -190,7 +170,6 @@ public class MainLoggedInFragment extends Fragment {
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 Log.e("firebase ",";local tem file created  created " +localFile.toString());
-                //  updateDb(timestamp,localFile.toString(),position);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
