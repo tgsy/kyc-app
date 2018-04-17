@@ -52,6 +52,8 @@ public class WriteTokenActivity extends BaseActivity {
         super.onNewIntent(intent);
         String token = "";
 
+        //if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())){
+
         if(intent.hasExtra(NfcAdapter.EXTRA_TAG)){
             //Toast.makeText(this,"NfcIntent!", Toast.LENGTH_LONG).show();
 
@@ -74,18 +76,24 @@ public class WriteTokenActivity extends BaseActivity {
             NdefMessage ndefMessage = createNdefMessage(token);
             writeNdefMessage(tag,ndefMessage);
         }
+       // }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        enableForegroundDipatchSystem();
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
+        nfcAdapter.enableForegroundDispatch(this,pendingIntent,null,null);
+        //enableForegroundDipatchSystem();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        disableForegroundDispatchSystem();
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.disableForegroundDispatch(this);
+        //disableForegroundDispatchSystem();
     }
 
     /*
@@ -148,7 +156,7 @@ public class WriteTokenActivity extends BaseActivity {
 
                 ndef.writeNdefMessage(ndefMessage);
                 ndef.close();
-                new updateTokenTask().execute();
+               // new updateTokenTask().execute();
             }
         } catch (Exception e) {
             Log.i("ERROR","writendefmessage: "+e.getMessage());
@@ -239,10 +247,6 @@ public class WriteTokenActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result){
             try {
-                /*JSONObject token = getToken();
-                remove the original AES_key from token and update it with new AES_key
-                token.remove("AES_key");
-                token.put("AES_key",result);*/
                 if (result.contains("Exception "))
                     Toast.makeText(WriteTokenActivity.this, "Oh no, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                 else {

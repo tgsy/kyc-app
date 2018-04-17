@@ -301,7 +301,7 @@ public class ProfileActivity extends BaseActivity implements
     }
 
     private void writeNewUser(String fullName, String postalCode, String identifNo, String dob) {
-        User nUser = new User(fullName, postalCode, identifNo, dob);
+        User nUser = new User(fullName, postalCode, identifNo.toUpperCase(), dob);
         usersRef.setValue(nUser);
         Log.i("TAG", "writinguser");
         int count = 1000;

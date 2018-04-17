@@ -89,7 +89,7 @@ public class MainLoggedInFragment extends Fragment {
 
         status = new HashMap<>();
         status.put(0, "Pending Verification");
-        status.put(1, "Pending Token Generation");
+        status.put(1, "Token Lost");
         status.put(2, "Verified Customer");
         status.put(3, "Profile Update Required");
 

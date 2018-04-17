@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,7 +60,7 @@ public class ReportFragment extends Fragment {
         reportLoss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                 alertDialog.setTitle("Report Loss of Token");
                 alertDialog.setMessage(getResources().getString(R.string.token_loss_prompt));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -73,18 +74,25 @@ public class ReportFragment extends Fragment {
                 alertDialog.setPositiveButton("REPORT",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                ID = input.getText().toString();
-                                new reportTokenLost().execute();
-                                /*Intent intent = new Intent(getActivity(), LoginActivity.class);
-                                startActivity(intent);
+                                switch (which) {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        Log.i("input", input.getText().toString());
+                                        if (TextUtils.isEmpty(input.getText().toString())) {
+                                            Log.i("input", input.getText().toString());
+                                            input.setError("Required");
+                                        }
+                                        else {
+                                            Log.i("input", input.getText().toString().toUpperCase());
+                                            new reportTokenLost().execute(input.getText().toString().toUpperCase());
+                                        }
+                                }
 
-                                getActivity().finish();*/
                             }
                         });
                 alertDialog.setNegativeButton("CANCEL",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
+
                             }
                         });
                 alertDialog.show();
@@ -104,32 +112,44 @@ public class ReportFragment extends Fragment {
                 byte[] pubKeyByte = BlocktraceCrypto.pemToBytes(str_public_key);
 
                 JSONObject nric = new JSONObject();
-                nric.put("block_id", BlocktraceCrypto.hash256(ID));
+                nric.put("block_id", BlocktraceCrypto.hash256(params[0]));
 
                 JSONObject encrypted_info = encrypt_json(nric, pubKeyByte);
-
+                String resp = Http_Post("https://kyc-project.herokuapp.com/token_lost", encrypted_info);
                 //receive the response from kyc backend
-                JSONObject message = new JSONObject(Http_Post("https://kyc-project.herokuapp.com/token_lost", encrypted_info));
+                JSONObject message;
+                if (resp.contains("False:")) {
+                    message = new JSONObject(resp.substring(6));
+                    return "False: "+message.toString();
+                }
+                else if (resp.contains("Exception:")){
+                    message = new JSONObject(resp.substring(10));
+                    return "Exception: "+message.toString();
+                }
+                else{
+                    message = new JSONObject(resp);
+                }
                 return message.toString();
             } catch (Exception ex) {
                 Log.i("ERROR",ex.getMessage());
-                return "Exception " + ex.getMessage();
+                return "Exception: " + ex.getMessage();
             }
         }
 
         @Override
         protected void onPostExecute(String result) {
-            if (!result.contains("Exception:")) {
+            Log.i("input", result);
+            if (!result.contains("Exception") &&
+                    !result.contains("False: ")) {
                 //Toast.makeText(getContext(), result, Toast.LENGTH_LONG).show();
                 Toast.makeText(getContext(), "Report Submission Successful", Toast.LENGTH_SHORT).show();
                 //mUserRef.getDatabase().getReference().child("users").child(userID).setValue(null);
+                //mUserRef.getDatabase().getReference().child("users").child(userID).child("status").setValue(1);
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();
             }
             else
                 Toast.makeText(getContext(), "Report Submission Was Unsuccessful, Please try again later.", Toast.LENGTH_SHORT).show();
-
-
         }
     }
 

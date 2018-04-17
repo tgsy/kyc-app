@@ -67,17 +67,21 @@ public class MainLoggedInActivity
             }
         });
 
-        int intentFragment = getIntent().getExtras().getInt("fragmentToLoad", 0);
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("fragmentToLoad")) {
+            int intentFragment = getIntent().getExtras().getInt("fragmentToLoad", 0);
 
-        switch (intentFragment) {
-            case 0:
-                fragmentClass = MainLoggedInFragment.class;
-                break;
-            case 1:
-                fragmentClass = CompanyFragment.class;
-                break;
-            default:
-                fragmentClass = MainLoggedInFragment.class;
+            switch (intentFragment) {
+                case 0:
+                    fragmentClass = MainLoggedInFragment.class;
+                    break;
+                case 1:
+                    fragmentClass = CompanyFragment.class;
+                    break;
+                default:
+                    fragmentClass = MainLoggedInFragment.class;
+            }
+        } else {
+            fragmentClass = MainLoggedInFragment.class;
         }
 
         try {

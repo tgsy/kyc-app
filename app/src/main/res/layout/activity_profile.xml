@@ -93,6 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:maxLines="3"
             android:inputType="textPersonName"
             android:selectAllOnFocus="false"
             android:paddingBottom="10dp"
@@ -162,7 +163,7 @@
             android:nextFocusDown="@+id/Profile_IdentifNo_EditText"
             android:layout_below="@+id/Profile_DoB_TextView"
             android:layout_toEndOf="@+id/Profile_DoB_Month_EditText"
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:inputType="date"
             android:singleLine="true"
@@ -183,9 +184,12 @@
         <EditText
             android:id="@+id/Profile_IdentifNo_EditText"
             android:layout_below="@+id/Profile_IdentifNo_TextView"
-            android:layout_width="200dp"
+            android:layout_width="180dp"
             android:maxLines="1"
+            android:lines="1"
+            android:singleLine="true"
             android:maxLength="9"
+            android:textAllCaps="true"
             android:paddingBottom="10dp"
             android:layout_height="match_parent" />
 
